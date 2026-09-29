@@ -1,0 +1,30 @@
+services:
+  db:
+    image: postgres:17
+    environment:
+      POSTGRES_DB: review
+      POSTGRES_USER: review
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?Set POSTGRES_PASSWORD in .env}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U review -d review"]
+      interval: 5s
+      timeout: 5s
+      retries: 12
+  app:
+    build: .
+    environment:
+      DATABASE_URL: postgresql+psycopg://review:${POSTGRES_PASSWORD}@db:5432/review
+      REVIEW_DATA_DIR: /app/data
+    volumes:
+      - app_data:/app/data
+    ports:
+      - "${BIND_ADDR:-127.0.0.1}:8000:8000"
+    depends_on:
+      db:
+        condition: service_healthy
+volumes:
+  postgres_data:
+  app_data:
+
