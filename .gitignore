@@ -1,0 +1,17 @@
+.venv/
+__pycache__/
+.pytest_cache/
+node_modules/
+dist/
+data/
+.env
+*.db
+*.sqlite*
+*.docx
+*.xlsx
+*.pdf
+*.log
+test-results/
+playwright-report/
+*.tsbuildinfo
+
