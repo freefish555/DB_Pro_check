@@ -148,6 +148,8 @@ function App() {
     }),
     [users, setUsers] = useState<Any[]>([]);
   const [note, setNote] = useState(""),
+    [recordQuery, setRecordQuery] = useState(""),
+    [recordUnmatchedOnly, setRecordUnmatchedOnly] = useState(false),
     [issueStatus, setIssueStatus] = useState("ALL"),
     [issueQuery, setIssueQuery] = useState(""),
     [passwords, setPasswords] = useState({ old: "", new: "" }),
@@ -291,8 +293,23 @@ function App() {
     (x) =>
       (issueStatus === "ALL" || x.status === issueStatus) &&
       (!issueQuery.trim() ||
-        `${x.title} ${x.description} ${x.object_name}`.includes(issueQuery.trim())),
+        `${x.title} ${x.description} ${x.object_name}`.includes(
+          issueQuery.trim(),
+        )),
   );
+  const saveMatch = (matchKey: string, requirementKey: string) =>
+    action(async () => {
+      const matches = {
+        ...(project.config?.matches || {}),
+        [matchKey]: requirementKey,
+      };
+      const updated = await api(`/projects/${project.id}`, "PATCH", {
+        version: project.version,
+        matches,
+      });
+      setProject(updated);
+      await load(updated, "appendix");
+    }, "测评项已确认");
   const nav = [
     ["overview", "总览", "◫"],
     ["documents", "文档与提取", "▤"],
@@ -794,75 +811,76 @@ function App() {
                       subtitle="模糊结果只是候选，不自动送入 AI。"
                     />
                     {records.blocked && <Notice text={records.blocked} />}
+                    <div className="issue-filters">
+                      <input
+                        aria-label="搜索结果记录"
+                        placeholder="搜索对象、测评项或原文"
+                        value={recordQuery}
+                        onChange={(e) => setRecordQuery(e.target.value)}
+                      />
+                      <label className="checkbox">
+                        <input
+                          type="checkbox"
+                          checked={recordUnmatchedOnly}
+                          onChange={(e) =>
+                            setRecordUnmatchedOnly(e.target.checked)
+                          }
+                        />
+                        仅看待匹配
+                      </label>
+                    </div>
                     <div className="record-list">
-                      {records.items?.slice(0, 100).map((x: Any) => (
-                        <div className="record-row" key={x.record.id}>
-                          <div>
-                            <strong>
-                              {x.record.object} ·{" "}
-                              {x.record.requirement.slice(0, 68)}
-                            </strong>
-                            <small>
-                              {x.record.source} · 原符合情况：
-                              {x.record.verdict || "未填"}
-                            </small>
-                            <p>
-                              {x.record.text.slice(0, 180)}
-                              {x.record.text.length > 180 ? "…" : ""}
-                            </p>
+                      {records.items
+                        ?.filter(
+                          (x: Any) =>
+                            (!recordUnmatchedOnly ||
+                              x.match.status !== "matched") &&
+                            (!recordQuery.trim() ||
+                              `${x.record.object} ${x.record.requirement} ${x.record.text}`.includes(
+                                recordQuery.trim(),
+                              )),
+                        )
+                        .map((x: Any) => (
+                          <div className="record-row" key={x.record.id}>
+                            <div>
+                              <strong>
+                                {x.record.object} ·{" "}
+                                {x.record.requirement.slice(0, 68)}
+                              </strong>
+                              <small>
+                                {x.record.source} · 原符合情况：
+                                {x.record.verdict || "未填"}
+                              </small>
+                              <p>
+                                {x.record.text.slice(0, 180)}
+                                {x.record.text.length > 180 ? "…" : ""}
+                              </p>
+                            </div>
+                            <div>
+                              <Badge
+                                text={
+                                  x.match.status === "matched"
+                                    ? "已匹配"
+                                    : "待确认"
+                                }
+                                tone={
+                                  x.match.status === "matched" ? "good" : "warn"
+                                }
+                              />
+                              <RequirementPicker
+                                record={x.record}
+                                current={x.match.requirement}
+                                candidates={x.match.candidates || []}
+                                requirements={requirements.items || []}
+                                onPick={(key) => saveMatch(x.match_key, key)}
+                              />
+                            </div>
                           </div>
-                          <div>
-                            <Badge
-                              text={
-                                x.match.status === "matched"
-                                  ? "已匹配"
-                                  : "待确认"
-                              }
-                              tone={
-                                x.match.status === "matched" ? "good" : "warn"
-                              }
-                            />
-                            {x.match.status !== "matched" &&
-                              x.match.candidates?.length > 0 && (
-                                <select
-                                  defaultValue=""
-                                  onChange={(e) => {
-                                    if (!e.target.value) return;
-                                    const matches = {
-                                      ...(project.config?.matches || {}),
-                                      [x.match_key]: e.target.value,
-                                    };
-                                    action(async () => {
-                                      const p = await api(
-                                        `/projects/${project.id}`,
-                                        "PATCH",
-                                        { version: project.version, matches },
-                                      );
-                                      setProject(p);
-                                      await load(p, "appendix");
-                                    }, "测评项已确认");
-                                  }}
-                                >
-                                  <option value="">选择对应测评项</option>
-                                  {x.match.candidates.map((c: Any) => (
-                                    <option value={c.key} key={c.key}>
-                                      {c.text.slice(0, 60)} · {c.score}
-                                    </option>
-                                  ))}
-                                </select>
-                              )}
-                          </div>
-                        </div>
-                      ))}
+                        ))}
                       {!records.items?.length && (
                         <Empty text="上传并解析测评报告后显示附录D记录" />
                       )}
                     </div>
-                    {records.count > 100 && (
-                      <p className="muted">
-                        页面先显示100条；审核任务会处理全部记录。
-                      </p>
-                    )}
                   </div>
                 </>
               )}
@@ -1315,7 +1333,9 @@ function App() {
                           <div className="detail-meta">
                             <span>章节 {selectedIssue.chapter}</span>
                             <span>
-                              类别 {categoryNames[selectedIssue.category] || selectedIssue.category}
+                              类别{" "}
+                              {categoryNames[selectedIssue.category] ||
+                                selectedIssue.category}
                             </span>
                             <span>对象 {selectedIssue.object_name || "—"}</span>
                           </div>
@@ -1327,7 +1347,11 @@ function App() {
                           {selectedIssue.evidence?.map((e: Any, i: number) => (
                             <div className="evidence" key={i}>
                               <small>
-                                {labels[e.role] || (e.role === "knowledge" ? "核查依据" : "来源")} · {e.source}
+                                {labels[e.role] ||
+                                  (e.role === "knowledge"
+                                    ? "核查依据"
+                                    : "来源")}{" "}
+                                · {e.source}
                               </small>
                               <p>{e.quote}</p>
                             </div>
@@ -1964,5 +1988,83 @@ function AliasEditor({
   );
 }
 
-createRoot(document.getElementById("root")!).render(<App />);
+function RequirementPicker({
+  record,
+  current,
+  candidates,
+  requirements,
+  onPick,
+}: {
+  record: Any;
+  current?: Any;
+  candidates: Any[];
+  requirements: Any[];
+  onPick: (key: string) => void;
+}) {
+  const [open, setOpen] = useState(false);
+  const [query, setQuery] = useState("");
+  const pool = requirements.filter(
+    (r) => r.domain === record.domain && r.family === record.extension,
+  );
+  const term = query.trim().toLocaleLowerCase();
+  const found = pool.filter(
+    (r) =>
+      !term ||
+      `${r.control} ${r.text} ${r.source}`.toLocaleLowerCase().includes(term),
+  );
+  return (
+    <details
+      className="requirement-picker"
+      open={open}
+      onToggle={(event) => setOpen(event.currentTarget.open)}
+    >
+      <summary>{current ? "查看或更改核查项" : "人工选择核查项"}</summary>
+      {open && (
+        <div className="requirement-picker-body">
+          {current && (
+            <small>
+              当前：{current.control} · {current.text}
+            </small>
+          )}
+          {!!candidates.length && (
+            <div className="requirement-candidates">
+              <small>相似候选（需人工确认）</small>
+              {candidates.map((item) => (
+                <button key={item.key} onClick={() => onPick(item.key)}>
+                  {item.text} · 相似度 {Math.round(item.score * 100)}%
+                </button>
+              ))}
+            </div>
+          )}
+          <input
+            aria-label={`搜索${record.object}的核查项`}
+            placeholder="搜索控制点、测评项或来源"
+            value={query}
+            onChange={(event) => setQuery(event.target.value)}
+          />
+          <small>
+            同一安全域与扩展下共 {pool.length} 项，当前找到 {found.length} 项
+          </small>
+          <div className="requirement-options">
+            {found.slice(0, 30).map((item) => (
+              <button key={item.key} onClick={() => onPick(item.key)}>
+                <b>{item.control}</b> · {item.text}
+                <small>{item.source}</small>
+              </button>
+            ))}
+          </div>
+          {found.length > 30 && (
+            <small>仅显示前 30 项，请继续输入关键词缩小范围。</small>
+          )}
+          {!pool.length && (
+            <small>
+              当前级别和扩展下没有该安全域的核查项，请先检查项目配置与知识库。
+            </small>
+          )}
+        </div>
+      )}
+    </details>
+  );
+}
 
+createRoot(document.getElementById("root")!).render(<App />);

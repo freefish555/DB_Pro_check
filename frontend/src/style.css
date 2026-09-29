@@ -1217,4 +1217,57 @@ details summary {
   color: #7a919d;
   font-size: 11px;
 }
-
+.requirement-picker {
+  width: min(390px, 38vw);
+  margin-top: 9px;
+  font-size: 11px;
+}
+.requirement-picker-body {
+  display: grid;
+  gap: 8px;
+  padding: 12px;
+  margin-top: 7px;
+  border: 1px solid #dce8ed;
+  background: #f8fbfc;
+  border-radius: 8px;
+}
+.requirement-picker-body > small,
+.requirement-candidates > small {
+  color: #6d8591;
+  line-height: 1.5;
+}
+.requirement-picker input {
+  width: 100%;
+  padding: 7px 9px;
+  font-size: 11px;
+}
+.requirement-candidates,
+.requirement-options {
+  display: grid;
+  gap: 5px;
+}
+.requirement-options {
+  max-height: 210px;
+  overflow: auto;
+}
+.requirement-candidates button,
+.requirement-options button {
+  text-align: left;
+  font-size: 11px;
+  line-height: 1.5;
+  padding: 7px 9px;
+}
+.requirement-options button small {
+  display: block;
+  margin-top: 3px;
+  color: #758b96;
+  font-weight: 400;
+}
+@media (max-width: 760px) {
+  .record-row {
+    flex-direction: column;
+  }
+  .requirement-picker {
+    width: 100%;
+  }
+}
