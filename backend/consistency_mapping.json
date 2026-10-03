@@ -1,0 +1,3165 @@
+{
+  "mapping_version": "consistency-v1.0",
+  "metadata": {
+    "source": "12-class field mapping and consistency requirements",
+    "precedence": "numeric chapter ancestry, then semantic ancestry when numbering absent, then category parent title and header signature; captions and physical ordinals are diagnostic only",
+    "availability": "source availability policies are defaults; an exact approved target header can prove an available field; 商密型号 never proves 证书编号",
+    "header_normalization": "remove Unicode whitespace and the known survey checkbox annotation only"
+  },
+  "categories": [
+    {
+      "id": "c01",
+      "label": "物理机房",
+      "title_aliases": [
+        "物理机房"
+      ],
+      "fields": [
+        {
+          "id": "c01_f01",
+          "label": "机房名称",
+          "comparison": "entity_name",
+          "sources": [
+            {
+              "role": "survey",
+              "scope": "full",
+              "header": "机房名称",
+              "availability_policy": "VALUE_OR_EMPTY"
+            },
+            {
+              "role": "plan",
+              "scope": "full",
+              "header": "\t机房名称",
+              "availability_policy": "VALUE_OR_EMPTY"
+            },
+            {
+              "role": "report",
+              "scope": "full",
+              "header": "\t机房名称",
+              "availability_policy": "VALUE_OR_EMPTY"
+            },
+            {
+              "role": "plan",
+              "scope": "sample",
+              "header": "\t机房名称",
+              "availability_policy": "VALUE_OR_EMPTY"
+            },
+            {
+              "role": "report",
+              "scope": "sample",
+              "header": "\t机房名称",
+              "availability_policy": "VALUE_OR_EMPTY"
+            }
+          ],
+          "header_aliases": [
+            "机房名称",
+            "\t机房名称"
+          ]
+        },
+        {
+          "id": "c01_f02",
+          "label": "物理位置",
+          "comparison": "ordinary_text",
+          "sources": [
+            {
+              "role": "survey",
+              "scope": "full",
+              "header": "物理位置",
+              "availability_policy": "VALUE_OR_EMPTY"
+            },
+            {
+              "role": "plan",
+              "scope": "full",
+              "header": "\t物理位置",
+              "availability_policy": "VALUE_OR_EMPTY"
+            },
+            {
+              "role": "report",
+              "scope": "full",
+              "header": "\t物理位置",
+              "availability_policy": "VALUE_OR_EMPTY"
+            },
+            {
+              "role": "plan",
+              "scope": "sample",
+              "header": "\t物理位置",
+              "availability_policy": "VALUE_OR_EMPTY"
+            },
+            {
+              "role": "report",
+              "scope": "sample",
+              "header": "\t物理位置",
+              "availability_policy": "VALUE_OR_EMPTY"
+            }
+          ],
+          "header_aliases": [
+            "物理位置",
+            "\t物理位置"
+          ]
+        },
+        {
+          "id": "c01_f03",
+          "label": "重要程度",
+          "comparison": "ordinary_text",
+          "sources": [
+            {
+              "role": "survey",
+              "scope": "full",
+              "header": "重要程度",
+              "availability_policy": "VALUE_OR_EMPTY"
+            },
+            {
+              "role": "plan",
+              "scope": "full",
+              "header": "\t重要程度",
+              "availability_policy": "VALUE_OR_EMPTY"
+            },
+            {
+              "role": "report",
+              "scope": "full",
+              "header": "\t重要程度",
+              "availability_policy": "VALUE_OR_EMPTY"
+            },
+            {
+              "role": "plan",
+              "scope": "sample",
+              "header": "\t重要程度",
+              "availability_policy": "VALUE_OR_EMPTY"
+            },
+            {
+              "role": "report",
+              "scope": "sample",
+              "header": "\t重要程度",
+              "availability_policy": "VALUE_OR_EMPTY"
+            }
+          ],
+          "header_aliases": [
+            "重要程度",
+            "\t重要程度"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "c02",
+      "label": "网络设备",
+      "title_aliases": [
+        "网络设备"
+      ],
+      "fields": [
+        {
+          "id": "c02_f01",
+          "label": "设备名称",
+          "comparison": "entity_name",
+          "sources": [
+            {
+              "role": "survey",
+              "scope": "full",
+              "header": "\t设备名称",
+              "availability_policy": "VALUE_OR_EMPTY"
+            },
+            {
+              "role": "plan",
+              "scope": "full",
+              "header": "设备名称",
+              "availability_policy": "VALUE_OR_EMPTY"
+            },
+            {
+              "role": "report",
+              "scope": "full",
+              "header": "设备名称",
+              "availability_policy": "VALUE_OR_EMPTY"
+            },
+            {
+              "role": "plan",
+              "scope": "sample",
+              "header": "设备名称",
+              "availability_policy": "VALUE_OR_EMPTY"
+            },
+            {
+              "role": "report",
+              "scope": "sample",
+              "header": "设备名称",
+              "availability_policy": "VALUE_OR_EMPTY"
+            }
+          ],
+          "header_aliases": [
+            "设备名称",
+            "\t设备名称"
+          ]
+        },
+        {
+          "id": "c02_f02",
+          "label": "是否虚拟设备",
+          "comparison": "ordinary_text",
+          "sources": [
+            {
+              "role": "survey",
+              "scope": "full",
+              "header": "\t是否为虚拟设备",
+              "availability_policy": "VALUE_OR_EMPTY"
+            },
+            {
+              "role": "plan",
+              "scope": "full",
+              "header": "虚拟\n设备",
+              "availability_policy": "VALUE_OR_EMPTY"
+            },
+            {
+              "role": "report",
+              "scope": "full",
+              "header": "是否虚拟设备",
+              "availability_policy": "VALUE_OR_EMPTY"
+            },
+            {
+              "role": "plan",
+              "scope": "sample",
+              "header": "虚拟\n设备",
+              "availability_policy": "VALUE_OR_EMPTY"
+            },
+            {
+              "role": "report",
+              "scope": "sample",
+              "header": "是否\n虚拟设备",
+              "availability_policy": "VALUE_OR_EMPTY"
+            }
+          ],
+          "header_aliases": [
+            "是否虚拟设备",
+            "\t是否为虚拟设备",
+            "虚拟\n设备",
+            "是否\n虚拟设备"
+          ]
+        },
+        {
+          "id": "c02_f03",
+          "label": "系统及版本",
+          "comparison": "ordinary_text",
+          "sources": [
+            {
+              "role": "survey",
+              "scope": "full",
+              "header": "\t系统/版本",
+              "availability_policy": "VALUE_OR_EMPTY"
+            },
+            {
+              "role": "plan",
+              "scope": "full",
+              "header": "系统及版本",
+              "availability_policy": "VALUE_OR_EMPTY"
+            },
+            {
+              "role": "report",
+              "scope": "full",
+              "header": "系统及版本",
+              "availability_policy": "VALUE_OR_EMPTY"
+            },
+            {
+              "role": "plan",
+              "scope": "sample",
+              "header": "系统\n及版本",
+              "availability_policy": "VALUE_OR_EMPTY"
+            },
+            {
+              "role": "report",
+              "scope": "sample",
+              "header": "系统及\n版本",
+              "availability_policy": "VALUE_OR_EMPTY"
+            }
+          ],
+          "header_aliases": [
+            "系统及版本",
+            "\t系统/版本",
+            "系统\n及版本",
+            "系统及\n版本"
+          ]
+        },
+        {
+          "id": "c02_f04",
+          "label": "品牌及型号",
+          "comparison": "ordinary_text",
+          "sources": [
+            {
+              "role": "survey",
+              "scope": "full",
+              "header": "\t品牌/型号",
+              "availability_policy": "VALUE_OR_EMPTY"
+            },
+            {
+              "role": "plan",
+              "scope": "full",
+              "header": "品牌型号",
+              "availability_policy": "VALUE_OR_EMPTY"
+            },
+            {
+              "role": "report",
+              "scope": "full",
+              "header": "品牌及\n型号",
+              "availability_policy": "VALUE_OR_EMPTY"
+            },
+            {
+              "role": "plan",
+              "scope": "sample",
+              "header": "品牌\n及型号",
+              "availability_policy": "VALUE_OR_EMPTY"
+            },
+            {
+              "role": "report",
+              "scope": "sample",
+              "header": "品牌及型号",
+              "availability_policy": "VALUE_OR_EMPTY"
+            }
+          ],
+          "header_aliases": [
+            "品牌及型号",
+            "\t品牌/型号",
+            "品牌型号",
+            "品牌及\n型号",
+            "品牌\n及型号"
+          ]
+        },
+        {
+          "id": "c02_f05",
+          "label": "用途",
+          "comparison": "ordinary_text",
+          "sources": [
+            {
+              "role": "survey",
+              "scope": "full",
+              "header": "\t用途",
+              "availability_policy": "VALUE_OR_EMPTY"
+            },
+            {
+              "role": "plan",
+              "scope": "full",
+              "header": "用途",
+              "availability_policy": "VALUE_OR_EMPTY"
+            },
+            {
+              "role": "report",
+              "scope": "full",
+              "header": "用途",
+              "availability_policy": "VALUE_OR_EMPTY"
+            },
+            {
+              "role": "plan",
+              "scope": "sample",
+              "header": "用途",
+              "availability_policy": "VALUE_OR_EMPTY"
+            },
+            {
+              "role": "report",
+              "scope": "sample",
+              "header": "用途",
+              "availability_policy": "VALUE_OR_EMPTY"
+            }
+          ],
+          "header_aliases": [
+            "用途",
+            "\t用途"
+          ]
+        },
+        {
+          "id": "c02_f06",
+          "label": "重要程度",
+          "comparison": "ordinary_text",
+          "sources": [
+            {
+              "role": "survey",
+              "scope": "full",
+              "header": "\t重要程度",
+              "availability_policy": "VALUE_OR_EMPTY"
+            },
+            {
+              "role": "plan",
+              "scope": "full",
+              "header": "重要\n程度",
+              "availability_policy": "VALUE_OR_EMPTY"
+            },
+            {
+              "role": "report",
+              "scope": "full",
+              "header": "重要程度",
+              "availability_policy": "VALUE_OR_EMPTY"
+            },
+            {
+              "role": "plan",
+              "scope": "sample",
+              "header": "重要\n程度",
+              "availability_policy": "VALUE_OR_EMPTY"
+            },
+            {
+              "role": "report",
+              "scope": "sample",
+              "header": "重要程度",
+              "availability_policy": "VALUE_OR_EMPTY"
+            }
+          ],
+          "header_aliases": [
+            "重要程度",
+            "\t重要程度",
+            "重要\n程度"
+          ]
+        },
+        {
+          "id": "c02_f07",
+          "label": "IP地址",
+          "comparison": "complete_address",
+          "sources": [
+            {
+              "role": "survey",
+              "scope": "full",
+              "header": "\tIP地址",
+              "availability_policy": "VALUE_OR_EMPTY"
+            },
+            {
+              "role": "plan",
+              "scope": "full",
+              "header": null,
+              "availability_policy": "FIELD_UNDEFINED"
+            },
+            {
+              "role": "report",
+              "scope": "full",
+              "header": "IP\n地址",
+              "availability_policy": "VALUE_OR_EMPTY"
+            },
+            {
+              "role": "plan",
+              "scope": "sample",
+              "header": null,
+              "availability_policy": "FIELD_UNDEFINED"
+            },
+            {
+              "role": "report",
+              "scope": "sample",
+              "header": null,
+              "availability_policy": "FIELD_UNDEFINED"
+            }
+          ],
+          "header_aliases": [
+            "IP地址",
+            "\tIP地址",
+            "IP\n地址"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "c03",
+      "label": "安全设备",
+      "title_aliases": [
+        "安全设备"
+      ],
+      "fields": [
+        {
+          "id": "c03_f01",
+          "label": "设备名称",
+          "comparison": "entity_name",
+          "sources": [
+            {
+              "role": "survey",
+              "scope": "full",
+              "header": "\t设备名称",
+              "availability_policy": "VALUE_OR_EMPTY"
+            },
+            {
+              "role": "plan",
+              "scope": "full",
+              "header": "设备名称",
+              "availability_policy": "VALUE_OR_EMPTY"
+            },
+            {
+              "role": "report",
+              "scope": "full",
+              "header": "设备名称",
+              "availability_policy": "VALUE_OR_EMPTY"
+            },
+            {
+              "role": "plan",
+              "scope": "sample",
+              "header": "设备名称",
+              "availability_policy": "VALUE_OR_EMPTY"
+            },
+            {
+              "role": "report",
+              "scope": "sample",
+              "header": "设备名称",
+              "availability_policy": "VALUE_OR_EMPTY"
+            }
+          ],
+          "header_aliases": [
+            "设备名称",
+            "\t设备名称"
+          ]
+        },
+        {
+          "id": "c03_f02",
+          "label": "是否虚拟设备",
+          "comparison": "ordinary_text",
+          "sources": [
+            {
+              "role": "survey",
+              "scope": "full",
+              "header": "\t是否为虚拟设备",
+              "availability_policy": "VALUE_OR_EMPTY"
+            },
+            {
+              "role": "plan",
+              "scope": "full",
+              "header": "虚拟设备",
+              "availability_policy": "VALUE_OR_EMPTY"
+            },
+            {
+              "role": "report",
+              "scope": "full",
+              "header": "是否虚拟设备",
+              "availability_policy": "VALUE_OR_EMPTY"
+            },
+            {
+              "role": "plan",
+              "scope": "sample",
+              "header": "虚拟\n设备",
+              "availability_policy": "VALUE_OR_EMPTY"
+            },
+            {
+              "role": "report",
+              "scope": "sample",
+              "header": "是否\n虚拟设备",
+              "availability_policy": "VALUE_OR_EMPTY"
+            }
+          ],
+          "header_aliases": [
+            "是否虚拟设备",
+            "\t是否为虚拟设备",
+            "虚拟设备",
+            "虚拟\n设备",
+            "是否\n虚拟设备"
+          ]
+        },
+        {
+          "id": "c03_f03",
+          "label": "系统及版本",
+          "comparison": "ordinary_text",
+          "sources": [
+            {
+              "role": "survey",
+              "scope": "full",
+              "header": "\t系统/版本",
+              "availability_policy": "VALUE_OR_EMPTY"
+            },
+            {
+              "role": "plan",
+              "scope": "full",
+              "header": "系统及版本",
+              "availability_policy": "VALUE_OR_EMPTY"
+            },
+            {
+              "role": "report",
+              "scope": "full",
+              "header": "系统及版本",
+              "availability_policy": "VALUE_OR_EMPTY"
+            },
+            {
+              "role": "plan",
+              "scope": "sample",
+              "header": "系统\n及版本",
+              "availability_policy": "VALUE_OR_EMPTY"
+            },
+            {
+              "role": "report",
+              "scope": "sample",
+              "header": "系统及\n版本",
+              "availability_policy": "VALUE_OR_EMPTY"
+            }
+          ],
+          "header_aliases": [
+            "系统及版本",
+            "\t系统/版本",
+            "系统\n及版本",
+            "系统及\n版本"
+          ]
+        },
+        {
+          "id": "c03_f04",
+          "label": "品牌及型号",
+          "comparison": "ordinary_text",
+          "sources": [
+            {
+              "role": "survey",
+              "scope": "full",
+              "header": "\t品牌/型号",
+              "availability_policy": "VALUE_OR_EMPTY"
+            },
+            {
+              "role": "plan",
+              "scope": "full",
+              "header": "品牌型号",
+              "availability_policy": "VALUE_OR_EMPTY"
+            },
+            {
+              "role": "report",
+              "scope": "full",
+              "header": "品牌及型号",
+              "availability_policy": "VALUE_OR_EMPTY"
+            },
+            {
+              "role": "plan",
+              "scope": "sample",
+              "header": "品牌\n及型号",
+              "availability_policy": "VALUE_OR_EMPTY"
+            },
+            {
+              "role": "report",
+              "scope": "sample",
+              "header": "品牌及型号",
+              "availability_policy": "VALUE_OR_EMPTY"
+            }
+          ],
+          "header_aliases": [
+            "品牌及型号",
+            "\t品牌/型号",
+            "品牌型号",
+            "品牌\n及型号"
+          ]
+        },
+        {
+          "id": "c03_f05",
+          "label": "用途",
+          "comparison": "ordinary_text",
+          "sources": [
+            {
+              "role": "survey",
+              "scope": "full",
+              "header": "\t用途",
+              "availability_policy": "VALUE_OR_EMPTY"
+            },
+            {
+              "role": "plan",
+              "scope": "full",
+              "header": "用途",
+              "availability_policy": "VALUE_OR_EMPTY"
+            },
+            {
+              "role": "report",
+              "scope": "full",
+              "header": "用途",
+              "availability_policy": "VALUE_OR_EMPTY"
+            },
+            {
+              "role": "plan",
+              "scope": "sample",
+              "header": "用途",
+              "availability_policy": "VALUE_OR_EMPTY"
+            },
+            {
+              "role": "report",
+              "scope": "sample",
+              "header": "用途",
+              "availability_policy": "VALUE_OR_EMPTY"
+            }
+          ],
+          "header_aliases": [
+            "用途",
+            "\t用途"
+          ]
+        },
+        {
+          "id": "c03_f06",
+          "label": "重要程度",
+          "comparison": "ordinary_text",
+          "sources": [
+            {
+              "role": "survey",
+              "scope": "full",
+              "header": "\t重要程度",
+              "availability_policy": "VALUE_OR_EMPTY"
+            },
+            {
+              "role": "plan",
+              "scope": "full",
+              "header": "重要程度",
+              "availability_policy": "VALUE_OR_EMPTY"
+            },
+            {
+              "role": "report",
+              "scope": "full",
+              "header": "重要\n程度",
+              "availability_policy": "VALUE_OR_EMPTY"
+            },
+            {
+              "role": "plan",
+              "scope": "sample",
+              "header": "重要\n程度",
+              "availability_policy": "VALUE_OR_EMPTY"
+            },
+            {
+              "role": "report",
+              "scope": "sample",
+              "header": "重要程度",
+              "availability_policy": "VALUE_OR_EMPTY"
+            }
+          ],
+          "header_aliases": [
+            "重要程度",
+            "\t重要程度",
+            "重要\n程度"
+          ]
+        },
+        {
+          "id": "c03_f07",
+          "label": "IP地址",
+          "comparison": "complete_address",
+          "sources": [
+            {
+              "role": "survey",
+              "scope": "full",
+              "header": "\tIP地址",
+              "availability_policy": "VALUE_OR_EMPTY"
+            },
+            {
+              "role": "plan",
+              "scope": "full",
+              "header": null,
+              "availability_policy": "FIELD_UNDEFINED"
+            },
+            {
+              "role": "report",
+              "scope": "full",
+              "header": "IP\n地址",
+              "availability_policy": "VALUE_OR_EMPTY"
+            },
+            {
+              "role": "plan",
+              "scope": "sample",
+              "header": null,
+              "availability_policy": "FIELD_UNDEFINED"
+            },
+            {
+              "role": "report",
+              "scope": "sample",
+              "header": null,
+              "availability_policy": "FIELD_UNDEFINED"
+            }
+          ],
+          "header_aliases": [
+            "IP地址",
+            "\tIP地址",
+            "IP\n地址"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "c04",
+      "label": "服务器",
+      "title_aliases": [
+        "服务器",
+        "服务器/存储设备"
+      ],
+      "fields": [
+        {
+          "id": "c04_f01",
+          "label": "设备名称",
+          "comparison": "entity_name",
+          "sources": [
+            {
+              "role": "survey",
+              "scope": "full",
+              "header": "\t设备名称",
+              "availability_policy": "VALUE_OR_EMPTY"
+            },
+            {
+              "role": "plan",
+              "scope": "full",
+              "header": "设备名称",
+              "availability_policy": "VALUE_OR_EMPTY"
+            },
+            {
+              "role": "report",
+              "scope": "full",
+              "header": "设备名称",
+              "availability_policy": "VALUE_OR_EMPTY"
+            },
+            {
+              "role": "plan",
+              "scope": "sample",
+              "header": "设备名称",
+              "availability_policy": "VALUE_OR_EMPTY"
+            },
+            {
+              "role": "report",
+              "scope": "sample",
+              "header": "设备名称",
+              "availability_policy": "VALUE_OR_EMPTY"
+            }
+          ],
+          "header_aliases": [
+            "设备名称",
+            "\t设备名称"
+          ]
+        },
+        {
+          "id": "c04_f02",
+          "label": "所属业务应用系统/ 平台名称",
+          "comparison": "ordinary_text",
+          "sources": [
+            {
+              "role": "survey",
+              "scope": "full",
+              "header": "\t所属业务系统/平台名称",
+              "availability_policy": "VALUE_OR_EMPTY"
+            },
+            {
+              "role": "plan",
+              "scope": "full",
+              "header": "所属业务应用系统/平台名称",
+              "availability_policy": "VALUE_OR_EMPTY"
+            },
+            {
+              "role": "report",
+              "scope": "full",
+              "header": "所属业务应用系统/ 平台\n名称",
+              "availability_policy": "VALUE_OR_EMPTY"
+            },
+            {
+              "role": "plan",
+              "scope": "sample",
+              "header": "所属业务应用系统/平台名称",
+              "availability_policy": "VALUE_OR_EMPTY"
+            },
+            {
+              "role": "report",
+              "scope": "sample",
+              "header": "所属业务应用系统/平台",
+              "availability_policy": "VALUE_OR_EMPTY"
+            }
+          ],
+          "header_aliases": [
+            "所属业务应用系统/ 平台名称",
+            "\t所属业务系统/平台名称",
+            "所属业务应用系统/平台名称",
+            "所属业务应用系统/ 平台\n名称",
+            "所属业务应用系统/平台"
+          ]
+        },
+        {
+          "id": "c04_f03",
+          "label": "是否虚拟设备",
+          "comparison": "ordinary_text",
+          "sources": [
+            {
+              "role": "survey",
+              "scope": "full",
+              "header": "\t是否为虚拟设备",
+              "availability_policy": "VALUE_OR_EMPTY"
+            },
+            {
+              "role": "plan",
+              "scope": "full",
+              "header": "虚拟设备",
+              "availability_policy": "VALUE_OR_EMPTY"
+            },
+            {
+              "role": "report",
+              "scope": "full",
+              "header": "是否虚拟设备",
+              "availability_policy": "VALUE_OR_EMPTY"
+            },
+            {
+              "role": "plan",
+              "scope": "sample",
+              "header": "虚拟设备",
+              "availability_policy": "VALUE_OR_EMPTY"
+            },
+            {
+              "role": "report",
+              "scope": "sample",
+              "header": "是否\n虚拟设备",
+              "availability_policy": "VALUE_OR_EMPTY"
+            }
+          ],
+          "header_aliases": [
+            "是否虚拟设备",
+            "\t是否为虚拟设备",
+            "虚拟设备",
+            "是否\n虚拟设备"
+          ]
+        },
+        {
+          "id": "c04_f04",
+          "label": "操作系统及版本",
+          "comparison": "ordinary_text",
+          "sources": [
+            {
+              "role": "survey",
+              "scope": "full",
+              "header": "\t操作系统",
+              "availability_policy": "VALUE_OR_EMPTY"
+            },
+            {
+              "role": "plan",
+              "scope": "full",
+              "header": "操作系统及版本",
+              "availability_policy": "VALUE_OR_EMPTY"
+            },
+            {
+              "role": "report",
+              "scope": "full",
+              "header": "操作\n系统及\n版本",
+              "availability_policy": "VALUE_OR_EMPTY"
+            },
+            {
+              "role": "plan",
+              "scope": "sample",
+              "header": "操作系统及版本",
+              "availability_policy": "VALUE_OR_EMPTY"
+            },
+            {
+              "role": "report",
+              "scope": "sample",
+              "header": "操作系统及版本",
+              "availability_policy": "VALUE_OR_EMPTY"
+            }
+          ],
+          "header_aliases": [
+            "操作系统及版本",
+            "\t操作系统",
+            "操作\n系统及\n版本"
+          ]
+        },
+        {
+          "id": "c04_f05",
+          "label": "数据库管理系统及版本",
+          "comparison": "ordinary_text",
+          "sources": [
+            {
+              "role": "survey",
+              "scope": "full",
+              "header": "\t数据库管理系统",
+              "availability_policy": "VALUE_OR_EMPTY"
+            },
+            {
+              "role": "plan",
+              "scope": "full",
+              "header": "数据库管理系统及版本",
+              "availability_policy": "VALUE_OR_EMPTY"
+            },
+            {
+              "role": "report",
+              "scope": "full",
+              "header": "数据库管理系统及版本",
+              "availability_policy": "VALUE_OR_EMPTY"
+            },
+            {
+              "role": "plan",
+              "scope": "sample",
+              "header": "数据库管理系统及版本",
+              "availability_policy": "VALUE_OR_EMPTY"
+            },
+            {
+              "role": "report",
+              "scope": "sample",
+              "header": "数据库管理系统及版本",
+              "availability_policy": "VALUE_OR_EMPTY"
+            }
+          ],
+          "header_aliases": [
+            "数据库管理系统及版本",
+            "\t数据库管理系统"
+          ]
+        },
+        {
+          "id": "c04_f06",
+          "label": "中间件及版本",
+          "comparison": "ordinary_text",
+          "sources": [
+            {
+              "role": "survey",
+              "scope": "full",
+              "header": "\t中间件及版本",
+              "availability_policy": "VALUE_OR_EMPTY"
+            },
+            {
+              "role": "plan",
+              "scope": "full",
+              "header": "中间件及版本",
+              "availability_policy": "VALUE_OR_EMPTY"
+            },
+            {
+              "role": "report",
+              "scope": "full",
+              "header": "中间件及版本",
+              "availability_policy": "VALUE_OR_EMPTY"
+            },
+            {
+              "role": "plan",
+              "scope": "sample",
+              "header": "中间件及版本",
+              "availability_policy": "VALUE_OR_EMPTY"
+            },
+            {
+              "role": "report",
+              "scope": "sample",
+              "header": "中间件及版本",
+              "availability_policy": "VALUE_OR_EMPTY"
+            }
+          ],
+          "header_aliases": [
+            "中间件及版本",
+            "\t中间件及版本"
+          ]
+        },
+        {
+          "id": "c04_f07",
+          "label": "重要程度",
+          "comparison": "ordinary_text",
+          "sources": [
+            {
+              "role": "survey",
+              "scope": "full",
+              "header": "\t重要程度",
+              "availability_policy": "VALUE_OR_EMPTY"
+            },
+            {
+              "role": "plan",
+              "scope": "full",
+              "header": "重要程度",
+              "availability_policy": "VALUE_OR_EMPTY"
+            },
+            {
+              "role": "report",
+              "scope": "full",
+              "header": "重要程度",
+              "availability_policy": "VALUE_OR_EMPTY"
+            },
+            {
+              "role": "plan",
+              "scope": "sample",
+              "header": "重要程度",
+              "availability_policy": "VALUE_OR_EMPTY"
+            },
+            {
+              "role": "report",
+              "scope": "sample",
+              "header": "重要\n程度",
+              "availability_policy": "VALUE_OR_EMPTY"
+            }
+          ],
+          "header_aliases": [
+            "重要程度",
+            "\t重要程度",
+            "重要\n程度"
+          ]
+        },
+        {
+          "id": "c04_f08",
+          "label": "IP地址",
+          "comparison": "complete_address",
+          "sources": [
+            {
+              "role": "survey",
+              "scope": "full",
+              "header": "\tIP",
+              "availability_policy": "VALUE_OR_EMPTY"
+            },
+            {
+              "role": "plan",
+              "scope": "full",
+              "header": null,
+              "availability_policy": "FIELD_UNDEFINED"
+            },
+            {
+              "role": "report",
+              "scope": "full",
+              "header": "IP\n地址",
+              "availability_policy": "VALUE_OR_EMPTY"
+            },
+            {
+              "role": "plan",
+              "scope": "sample",
+              "header": null,
+              "availability_policy": "FIELD_UNDEFINED"
+            },
+            {
+              "role": "report",
+              "scope": "sample",
+              "header": null,
+              "availability_policy": "FIELD_UNDEFINED"
+            }
+          ],
+          "header_aliases": [
+            "IP地址",
+            "\tIP",
+            "IP\n地址"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "c05",
+      "label": "终端设备",
+      "title_aliases": [
+        "终端设备"
+      ],
+      "fields": [
+        {
+          "id": "c05_f01",
+          "label": "设备名称",
+          "comparison": "entity_name",
+          "sources": [
+            {
+              "role": "survey",
+              "scope": "full",
+              "header": "\t设备名称",
+              "availability_policy": "VALUE_OR_EMPTY"
+            },
+            {
+              "role": "plan",
+              "scope": "full",
+              "header": "设备名称",
+              "availability_policy": "VALUE_OR_EMPTY"
+            },
+            {
+              "role": "report",
+              "scope": "full",
+              "header": "设备名称",
+              "availability_policy": "VALUE_OR_EMPTY"
+            },
+            {
+              "role": "plan",
+              "scope": "sample",
+              "header": "设备名称",
+              "availability_policy": "VALUE_OR_EMPTY"
+            },
+            {
+              "role": "report",
+              "scope": "sample",
+              "header": "设备名称",
+              "availability_policy": "VALUE_OR_EMPTY"
+            }
+          ],
+          "header_aliases": [
+            "设备名称",
+            "\t设备名称"
+          ]
+        },
+        {
+          "id": "c05_f02",
+          "label": "是否虚拟设备",
+          "comparison": "ordinary_text",
+          "sources": [
+            {
+              "role": "survey",
+              "scope": "full",
+              "header": "\t是否为虚拟设备",
+              "availability_policy": "VALUE_OR_EMPTY"
+            },
+            {
+              "role": "plan",
+              "scope": "full",
+              "header": "虚拟设备",
+              "availability_policy": "VALUE_OR_EMPTY"
+            },
+            {
+              "role": "report",
+              "scope": "full",
+              "header": "是否虚拟设备",
+              "availability_policy": "VALUE_OR_EMPTY"
+            },
+            {
+              "role": "plan",
+              "scope": "sample",
+              "header": "虚拟\n设备",
+              "availability_policy": "VALUE_OR_EMPTY"
+            },
+            {
+              "role": "report",
+              "scope": "sample",
+              "header": "是否\n虚拟设备",
+              "availability_policy": "VALUE_OR_EMPTY"
+            }
+          ],
+          "header_aliases": [
+            "是否虚拟设备",
+            "\t是否为虚拟设备",
+            "虚拟设备",
+            "虚拟\n设备",
+            "是否\n虚拟设备"
+          ]
+        },
+        {
+          "id": "c05_f03",
+          "label": "操作系统及版本",
+          "comparison": "ordinary_text",
+          "sources": [
+            {
+              "role": "survey",
+              "scope": "full",
+              "header": "\t操作系统",
+              "availability_policy": "VALUE_OR_EMPTY"
+            },
+            {
+              "role": "plan",
+              "scope": "full",
+              "header": "操作系统/控制软件及版本",
+              "availability_policy": "VALUE_OR_EMPTY"
+            },
+            {
+              "role": "report",
+              "scope": "full",
+              "header": "操作系统及\n版本",
+              "availability_policy": "VALUE_OR_EMPTY"
+            },
+            {
+              "role": "plan",
+              "scope": "sample",
+              "header": "操作系统/\n控制软件及版本",
+              "availability_policy": "VALUE_OR_EMPTY"
+            },
+            {
+              "role": "report",
+              "scope": "sample",
+              "header": "操作系统及\n版本",
+              "availability_policy": "VALUE_OR_EMPTY"
+            }
+          ],
+          "header_aliases": [
+            "操作系统及版本",
+            "\t操作系统",
+            "操作系统/控制软件及版本",
+            "操作系统及\n版本",
+            "操作系统/\n控制软件及版本"
+          ]
+        },
+        {
+          "id": "c05_f04",
+          "label": "用途",
+          "comparison": "ordinary_text",
+          "sources": [
+            {
+              "role": "survey",
+              "scope": "full",
+              "header": "\t用途",
+              "availability_policy": "VALUE_OR_EMPTY"
+            },
+            {
+              "role": "plan",
+              "scope": "full",
+              "header": "设备类别/用途",
+              "availability_policy": "VALUE_OR_EMPTY"
+            },
+            {
+              "role": "report",
+              "scope": "full",
+              "header": "用途",
+              "availability_policy": "VALUE_OR_EMPTY"
+            },
+            {
+              "role": "plan",
+              "scope": "sample",
+              "header": "设备类别/用途",
+              "availability_policy": "VALUE_OR_EMPTY"
+            },
+            {
+              "role": "report",
+              "scope": "sample",
+              "header": "用途",
+              "availability_policy": "VALUE_OR_EMPTY"
+            }
+          ],
+          "header_aliases": [
+            "用途",
+            "\t用途",
+            "设备类别/用途"
+          ]
+        },
+        {
+          "id": "c05_f05",
+          "label": "重要程度",
+          "comparison": "ordinary_text",
+          "sources": [
+            {
+              "role": "survey",
+              "scope": "full",
+              "header": "\t重要程度",
+              "availability_policy": "VALUE_OR_EMPTY"
+            },
+            {
+              "role": "plan",
+              "scope": "full",
+              "header": "重要程度",
+              "availability_policy": "VALUE_OR_EMPTY"
+            },
+            {
+              "role": "report",
+              "scope": "full",
+              "header": "重要程度",
+              "availability_policy": "VALUE_OR_EMPTY"
+            },
+            {
+              "role": "plan",
+              "scope": "sample",
+              "header": "重要\n程度",
+              "availability_policy": "VALUE_OR_EMPTY"
+            },
+            {
+              "role": "report",
+              "scope": "sample",
+              "header": "重要\n程度",
+              "availability_policy": "VALUE_OR_EMPTY"
+            }
+          ],
+          "header_aliases": [
+            "重要程度",
+            "\t重要程度",
+            "重要\n程度"
+          ]
+        },
+        {
+          "id": "c05_f06",
+          "label": "IP地址",
+          "comparison": "complete_address",
+          "sources": [
+            {
+              "role": "survey",
+              "scope": "full",
+              "header": "\tIP地址",
+              "availability_policy": "VALUE_OR_EMPTY"
+            },
+            {
+              "role": "plan",
+              "scope": "full",
+              "header": null,
+              "availability_policy": "FIELD_UNDEFINED"
+            },
+            {
+              "role": "report",
+              "scope": "full",
+              "header": "IP\n地址",
+              "availability_policy": "VALUE_OR_EMPTY"
+            },
+            {
+              "role": "plan",
+              "scope": "sample",
+              "header": null,
+              "availability_policy": "FIELD_UNDEFINED"
+            },
+            {
+              "role": "report",
+              "scope": "sample",
+              "header": null,
+              "availability_policy": "FIELD_UNDEFINED"
+            }
+          ],
+          "header_aliases": [
+            "IP地址",
+            "\tIP地址",
+            "IP\n地址"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "c06",
+      "label": "其他系统或设备",
+      "title_aliases": [
+        "其他系统或设备",
+        "其他设备"
+      ],
+      "fields": [
+        {
+          "id": "c06_f01",
+          "label": "设备名称",
+          "comparison": "entity_name",
+          "sources": [
+            {
+              "role": "survey",
+              "scope": "full",
+              "header": "\t设备\n名称",
+              "availability_policy": "VALUE_OR_EMPTY"
+            },
+            {
+              "role": "plan",
+              "scope": "full",
+              "header": "设备名称",
+              "availability_policy": "VALUE_OR_EMPTY"
+            },
+            {
+              "role": "report",
+              "scope": "full",
+              "header": "设备名称",
+              "availability_policy": "VALUE_OR_EMPTY"
+            },
+            {
+              "role": "plan",
+              "scope": "sample",
+              "header": "设备名称",
+              "availability_policy": "VALUE_OR_EMPTY"
+            },
+            {
+              "role": "report",
+              "scope": "sample",
+              "header": "设备名称",
+              "availability_policy": "VALUE_OR_EMPTY"
+            }
+          ],
+          "header_aliases": [
+            "设备名称",
+            "\t设备\n名称"
+          ]
+        },
+        {
+          "id": "c06_f02",
+          "label": "是否虚拟设备",
+          "comparison": "ordinary_text",
+          "sources": [
+            {
+              "role": "survey",
+              "scope": "full",
+              "header": "\t是否\n为虚拟设备",
+              "availability_policy": "VALUE_OR_EMPTY"
+            },
+            {
+              "role": "plan",
+              "scope": "full",
+              "header": "是否虚拟设备",
+              "availability_policy": "VALUE_OR_EMPTY"
+            },
+            {
+              "role": "report",
+              "scope": "full",
+              "header": "是否虚拟设备",
+              "availability_policy": "VALUE_OR_EMPTY"
+            },
+            {
+              "role": "plan",
+              "scope": "sample",
+              "header": "是否虚拟设备",
+              "availability_policy": "VALUE_OR_EMPTY"
+            },
+            {
+              "role": "report",
+              "scope": "sample",
+              "header": "是否\n虚拟设备",
+              "availability_policy": "VALUE_OR_EMPTY"
+            }
+          ],
+          "header_aliases": [
+            "是否虚拟设备",
+            "\t是否\n为虚拟设备",
+            "是否\n虚拟设备"
+          ]
+        },
+        {
+          "id": "c06_f03",
+          "label": "系统及版本",
+          "comparison": "ordinary_text",
+          "sources": [
+            {
+              "role": "survey",
+              "scope": "full",
+              "header": "\t系统\n及版本",
+              "availability_policy": "VALUE_OR_EMPTY"
+            },
+            {
+              "role": "plan",
+              "scope": "full",
+              "header": "操作系统/控制软件及版本",
+              "availability_policy": "VALUE_OR_EMPTY"
+            },
+            {
+              "role": "report",
+              "scope": "full",
+              "header": "系统及版本",
+              "availability_policy": "VALUE_OR_EMPTY"
+            },
+            {
+              "role": "plan",
+              "scope": "sample",
+              "header": "系统及版本",
+              "availability_policy": "VALUE_OR_EMPTY"
+            },
+            {
+              "role": "report",
+              "scope": "sample",
+              "header": "系统及版本",
+              "availability_policy": "VALUE_OR_EMPTY"
+            }
+          ],
+          "header_aliases": [
+            "系统及版本",
+            "\t系统\n及版本",
+            "操作系统/控制软件及版本"
+          ]
+        },
+        {
+          "id": "c06_f04",
+          "label": "设备类别/用途",
+          "comparison": "ordinary_text",
+          "sources": [
+            {
+              "role": "survey",
+              "scope": "full",
+              "header": "\t设备类别/\n用途",
+              "availability_policy": "VALUE_OR_EMPTY"
+            },
+            {
+              "role": "plan",
+              "scope": "full",
+              "header": "设备类别/用途",
+              "availability_policy": "VALUE_OR_EMPTY"
+            },
+            {
+              "role": "report",
+              "scope": "full",
+              "header": "设备类别/用途",
+              "availability_policy": "VALUE_OR_EMPTY"
+            },
+            {
+              "role": "plan",
+              "scope": "sample",
+              "header": "设备类别/用途",
+              "availability_policy": "VALUE_OR_EMPTY"
+            },
+            {
+              "role": "report",
+              "scope": "sample",
+              "header": "设备类别/用途",
+              "availability_policy": "VALUE_OR_EMPTY"
+            }
+          ],
+          "header_aliases": [
+            "设备类别/用途",
+            "\t设备类别/\n用途"
+          ]
+        },
+        {
+          "id": "c06_f05",
+          "label": "重要程度",
+          "comparison": "ordinary_text",
+          "sources": [
+            {
+              "role": "survey",
+              "scope": "full",
+              "header": "\t重要\n程度",
+              "availability_policy": "VALUE_OR_EMPTY"
+            },
+            {
+              "role": "plan",
+              "scope": "full",
+              "header": "重要\n程度",
+              "availability_policy": "VALUE_OR_EMPTY"
+            },
+            {
+              "role": "report",
+              "scope": "full",
+              "header": "重要程度",
+              "availability_policy": "VALUE_OR_EMPTY"
+            },
+            {
+              "role": "plan",
+              "scope": "sample",
+              "header": "重要程度",
+              "availability_policy": "VALUE_OR_EMPTY"
+            },
+            {
+              "role": "report",
+              "scope": "sample",
+              "header": "重要\n程度",
+              "availability_policy": "VALUE_OR_EMPTY"
+            }
+          ],
+          "header_aliases": [
+            "重要程度",
+            "\t重要\n程度",
+            "重要\n程度"
+          ]
+        },
+        {
+          "id": "c06_f06",
+          "label": "IP地址",
+          "comparison": "complete_address",
+          "sources": [
+            {
+              "role": "survey",
+              "scope": "full",
+              "header": "\tIP\n地址",
+              "availability_policy": "VALUE_OR_EMPTY"
+            },
+            {
+              "role": "plan",
+              "scope": "full",
+              "header": null,
+              "availability_policy": "FIELD_UNDEFINED"
+            },
+            {
+              "role": "report",
+              "scope": "full",
+              "header": "IP\n地址",
+              "availability_policy": "VALUE_OR_EMPTY"
+            },
+            {
+              "role": "plan",
+              "scope": "sample",
+              "header": null,
+              "availability_policy": "FIELD_UNDEFINED"
+            },
+            {
+              "role": "report",
+              "scope": "sample",
+              "header": null,
+              "availability_policy": "FIELD_UNDEFINED"
+            }
+          ],
+          "header_aliases": [
+            "IP地址",
+            "\tIP\n地址",
+            "IP\n地址"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "c07",
+      "label": "系统管理软件/平台",
+      "title_aliases": [
+        "系统管理软件/平台"
+      ],
+      "fields": [
+        {
+          "id": "c07_f01",
+          "label": "系统管理软件/平台名称",
+          "comparison": "entity_name",
+          "sources": [
+            {
+              "role": "survey",
+              "scope": "full",
+              "header": "\t系统管理软件/平台名称",
+              "availability_policy": "VALUE_OR_EMPTY"
+            },
+            {
+              "role": "plan",
+              "scope": "full",
+              "header": "系统管理软件/平台名称",
+              "availability_policy": "VALUE_OR_EMPTY"
+            },
+            {
+              "role": "report",
+              "scope": "full",
+              "header": "系统管理软件/平台名称",
+              "availability_policy": "VALUE_OR_EMPTY"
+            },
+            {
+              "role": "plan",
+              "scope": "sample",
+              "header": "系统管理软件/平台名称",
+              "availability_policy": "VALUE_OR_EMPTY"
+            },
+            {
+              "role": "report",
+              "scope": "sample",
+              "header": "系统管理软件/\n平台名称",
+              "availability_policy": "VALUE_OR_EMPTY"
+            }
+          ],
+          "header_aliases": [
+            "系统管理软件/平台名称",
+            "\t系统管理软件/平台名称",
+            "系统管理软件/\n平台名称"
+          ]
+        },
+        {
+          "id": "c07_f02",
+          "label": "所在设备名称",
+          "comparison": "ordinary_text",
+          "sources": [
+            {
+              "role": "survey",
+              "scope": "full",
+              "header": "\t所在服务器",
+              "availability_policy": "VALUE_OR_EMPTY"
+            },
+            {
+              "role": "plan",
+              "scope": "full",
+              "header": "所在设备名称",
+              "availability_policy": "VALUE_OR_EMPTY"
+            },
+            {
+              "role": "report",
+              "scope": "full",
+              "header": "所在设备\n名称",
+              "availability_policy": "VALUE_OR_EMPTY"
+            },
+            {
+              "role": "plan",
+              "scope": "sample",
+              "header": "所在设备名称",
+              "availability_policy": "VALUE_OR_EMPTY"
+            },
+            {
+              "role": "report",
+              "scope": "sample",
+              "header": "所在设备名称",
+              "availability_policy": "VALUE_OR_EMPTY"
+            }
+          ],
+          "header_aliases": [
+            "所在设备名称",
+            "\t所在服务器",
+            "所在设备\n名称"
+          ]
+        },
+        {
+          "id": "c07_f03",
+          "label": "版本",
+          "comparison": "ordinary_text",
+          "sources": [
+            {
+              "role": "survey",
+              "scope": "full",
+              "header": "\t类型/版本",
+              "availability_policy": "VALUE_OR_EMPTY"
+            },
+            {
+              "role": "plan",
+              "scope": "full",
+              "header": "版本",
+              "availability_policy": "VALUE_OR_EMPTY"
+            },
+            {
+              "role": "report",
+              "scope": "full",
+              "header": "版本",
+              "availability_policy": "VALUE_OR_EMPTY"
+            },
+            {
+              "role": "plan",
+              "scope": "sample",
+              "header": "版本",
+              "availability_policy": "VALUE_OR_EMPTY"
+            },
+            {
+              "role": "report",
+              "scope": "sample",
+              "header": "版本",
+              "availability_policy": "VALUE_OR_EMPTY"
+            }
+          ],
+          "header_aliases": [
+            "版本",
+            "\t类型/版本"
+          ]
+        },
+        {
+          "id": "c07_f04",
+          "label": "主要功能",
+          "comparison": "ordinary_text",
+          "sources": [
+            {
+              "role": "survey",
+              "scope": "full",
+              "header": "\t主要功能",
+              "availability_policy": "VALUE_OR_EMPTY"
+            },
+            {
+              "role": "plan",
+              "scope": "full",
+              "header": "主要功能",
+              "availability_policy": "VALUE_OR_EMPTY"
+            },
+            {
+              "role": "report",
+              "scope": "full",
+              "header": "主要功能",
+              "availability_policy": "VALUE_OR_EMPTY"
+            },
+            {
+              "role": "plan",
+              "scope": "sample",
+              "header": "主要功能",
+              "availability_policy": "VALUE_OR_EMPTY"
+            },
+            {
+              "role": "report",
+              "scope": "sample",
+              "header": "主要功能",
+              "availability_policy": "VALUE_OR_EMPTY"
+            }
+          ],
+          "header_aliases": [
+            "主要功能",
+            "\t主要功能"
+          ]
+        },
+        {
+          "id": "c07_f05",
+          "label": "重要程度",
+          "comparison": "ordinary_text",
+          "sources": [
+            {
+              "role": "survey",
+              "scope": "full",
+              "header": "\t重要程度",
+              "availability_policy": "VALUE_OR_EMPTY"
+            },
+            {
+              "role": "plan",
+              "scope": "full",
+              "header": "重要程度",
+              "availability_policy": "VALUE_OR_EMPTY"
+            },
+            {
+              "role": "report",
+              "scope": "full",
+              "header": "重要程度",
+              "availability_policy": "VALUE_OR_EMPTY"
+            },
+            {
+              "role": "plan",
+              "scope": "sample",
+              "header": "重要\n程度",
+              "availability_policy": "VALUE_OR_EMPTY"
+            },
+            {
+              "role": "report",
+              "scope": "sample",
+              "header": "重要\n程度",
+              "availability_policy": "VALUE_OR_EMPTY"
+            }
+          ],
+          "header_aliases": [
+            "重要程度",
+            "\t重要程度",
+            "重要\n程度"
+          ]
+        },
+        {
+          "id": "c07_f06",
+          "label": "IP地址",
+          "comparison": "complete_address",
+          "sources": [
+            {
+              "role": "survey",
+              "scope": "full",
+              "header": "\tIP\n\t地址",
+              "availability_policy": "VALUE_OR_EMPTY"
+            },
+            {
+              "role": "plan",
+              "scope": "full",
+              "header": null,
+              "availability_policy": "FIELD_UNDEFINED"
+            },
+            {
+              "role": "report",
+              "scope": "full",
+              "header": "IP\n地址",
+              "availability_policy": "VALUE_OR_EMPTY"
+            },
+            {
+              "role": "plan",
+              "scope": "sample",
+              "header": null,
+              "availability_policy": "FIELD_UNDEFINED"
+            },
+            {
+              "role": "report",
+              "scope": "sample",
+              "header": null,
+              "availability_policy": "FIELD_UNDEFINED"
+            }
+          ],
+          "header_aliases": [
+            "IP地址",
+            "\tIP\n\t地址",
+            "IP\n地址"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "c08",
+      "label": "业务应用系统/平台",
+      "title_aliases": [
+        "业务应用系统/平台",
+        "业务应用软件/平台",
+        "业务应用/平台"
+      ],
+      "fields": [
+        {
+          "id": "c08_f01",
+          "label": "业务应用系统/ 平台名称",
+          "comparison": "entity_name",
+          "sources": [
+            {
+              "role": "survey",
+              "scope": "full",
+              "header": "业务应用系统/平台名称",
+              "availability_policy": "VALUE_OR_EMPTY"
+            },
+            {
+              "role": "plan",
+              "scope": "full",
+              "header": "业务应用系统/平台名称",
+              "availability_policy": "VALUE_OR_EMPTY"
+            },
+            {
+              "role": "report",
+              "scope": "full",
+              "header": "业务应用系统/ 平台名称",
+              "availability_policy": "VALUE_OR_EMPTY"
+            },
+            {
+              "role": "plan",
+              "scope": "sample",
+              "header": "业务应用系统/平台名称",
+              "availability_policy": "VALUE_OR_EMPTY"
+            },
+            {
+              "role": "report",
+              "scope": "sample",
+              "header": "业务应用系统/平台名称",
+              "availability_policy": "VALUE_OR_EMPTY"
+            }
+          ],
+          "header_aliases": [
+            "业务应用系统/ 平台名称",
+            "业务应用系统/平台名称"
+          ]
+        },
+        {
+          "id": "c08_f02",
+          "label": "主要功能",
+          "comparison": "ordinary_text",
+          "sources": [
+            {
+              "role": "survey",
+              "scope": "full",
+              "header": "主要功能",
+              "availability_policy": "VALUE_OR_EMPTY"
+            },
+            {
+              "role": "plan",
+              "scope": "full",
+              "header": "主要功能",
+              "availability_policy": "VALUE_OR_EMPTY"
+            },
+            {
+              "role": "report",
+              "scope": "full",
+              "header": "主要功能",
+              "availability_policy": "VALUE_OR_EMPTY"
+            },
+            {
+              "role": "plan",
+              "scope": "sample",
+              "header": "主要功能",
+              "availability_policy": "VALUE_OR_EMPTY"
+            },
+            {
+              "role": "report",
+              "scope": "sample",
+              "header": "主要功能",
+              "availability_policy": "VALUE_OR_EMPTY"
+            }
+          ],
+          "header_aliases": [
+            "主要功能"
+          ]
+        },
+        {
+          "id": "c08_f03",
+          "label": "业务应用软件及版本",
+          "comparison": "ordinary_text",
+          "sources": [
+            {
+              "role": "survey",
+              "scope": "full",
+              "header": "业务应用软件及版本",
+              "availability_policy": "VALUE_OR_EMPTY"
+            },
+            {
+              "role": "plan",
+              "scope": "full",
+              "header": "业务应用软件及版本",
+              "availability_policy": "VALUE_OR_EMPTY"
+            },
+            {
+              "role": "report",
+              "scope": "full",
+              "header": "业务应用软件及版本",
+              "availability_policy": "VALUE_OR_EMPTY"
+            },
+            {
+              "role": "plan",
+              "scope": "sample",
+              "header": "业务应用软件及版本",
+              "availability_policy": "VALUE_OR_EMPTY"
+            },
+            {
+              "role": "report",
+              "scope": "sample",
+              "header": "业务应用软件及版本",
+              "availability_policy": "VALUE_OR_EMPTY"
+            }
+          ],
+          "header_aliases": [
+            "业务应用软件及版本"
+          ]
+        },
+        {
+          "id": "c08_f04",
+          "label": "开发厂商",
+          "comparison": "ordinary_text",
+          "sources": [
+            {
+              "role": "survey",
+              "scope": "full",
+              "header": "开发厂商",
+              "availability_policy": "VALUE_OR_EMPTY"
+            },
+            {
+              "role": "plan",
+              "scope": "full",
+              "header": "开发厂商",
+              "availability_policy": "VALUE_OR_EMPTY"
+            },
+            {
+              "role": "report",
+              "scope": "full",
+              "header": "开发厂商",
+              "availability_policy": "VALUE_OR_EMPTY"
+            },
+            {
+              "role": "plan",
+              "scope": "sample",
+              "header": "开发厂商",
+              "availability_policy": "VALUE_OR_EMPTY"
+            },
+            {
+              "role": "report",
+              "scope": "sample",
+              "header": "开发厂商",
+              "availability_policy": "VALUE_OR_EMPTY"
+            }
+          ],
+          "header_aliases": [
+            "开发厂商"
+          ]
+        },
+        {
+          "id": "c08_f05",
+          "label": "重要程度",
+          "comparison": "ordinary_text",
+          "sources": [
+            {
+              "role": "survey",
+              "scope": "full",
+              "header": "重要程度",
+              "availability_policy": "VALUE_OR_EMPTY"
+            },
+            {
+              "role": "plan",
+              "scope": "full",
+              "header": "重要程度",
+              "availability_policy": "VALUE_OR_EMPTY"
+            },
+            {
+              "role": "report",
+              "scope": "full",
+              "header": "重要程度",
+              "availability_policy": "VALUE_OR_EMPTY"
+            },
+            {
+              "role": "plan",
+              "scope": "sample",
+              "header": "重要程度",
+              "availability_policy": "VALUE_OR_EMPTY"
+            },
+            {
+              "role": "report",
+              "scope": "sample",
+              "header": "重要\n程度",
+              "availability_policy": "VALUE_OR_EMPTY"
+            }
+          ],
+          "header_aliases": [
+            "重要程度",
+            "重要\n程度"
+          ]
+        },
+        {
+          "id": "c08_f06",
+          "label": "IP地址",
+          "comparison": "complete_address",
+          "sources": [
+            {
+              "role": "survey",
+              "scope": "full",
+              "header": "所在服务器及IP地址",
+              "availability_policy": "VALUE_OR_EMPTY"
+            },
+            {
+              "role": "plan",
+              "scope": "full",
+              "header": null,
+              "availability_policy": "FIELD_UNDEFINED"
+            },
+            {
+              "role": "report",
+              "scope": "full",
+              "header": "IP\n地址",
+              "availability_policy": "VALUE_OR_EMPTY"
+            },
+            {
+              "role": "plan",
+              "scope": "sample",
+              "header": null,
+              "availability_policy": "FIELD_UNDEFINED"
+            },
+            {
+              "role": "report",
+              "scope": "sample",
+              "header": null,
+              "availability_policy": "FIELD_UNDEFINED"
+            }
+          ],
+          "header_aliases": [
+            "IP地址",
+            "所在服务器及IP地址",
+            "IP\n地址"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "c09",
+      "label": "数据资源",
+      "title_aliases": [
+        "数据资源"
+      ],
+      "fields": [
+        {
+          "id": "c09_f01",
+          "label": "数据类别",
+          "comparison": "entity_name",
+          "sources": [
+            {
+              "role": "survey",
+              "scope": "full",
+              "header": "数据类别",
+              "availability_policy": "VALUE_OR_EMPTY"
+            },
+            {
+              "role": "plan",
+              "scope": "full",
+              "header": "数据类别",
+              "availability_policy": "VALUE_OR_EMPTY"
+            },
+            {
+              "role": "report",
+              "scope": "full",
+              "header": "数据类别",
+              "availability_policy": "VALUE_OR_EMPTY"
+            },
+            {
+              "role": "plan",
+              "scope": "sample",
+              "header": "数据类别",
+              "availability_policy": "VALUE_OR_EMPTY"
+            },
+            {
+              "role": "report",
+              "scope": "sample",
+              "header": "数据类别",
+              "availability_policy": "VALUE_OR_EMPTY"
+            }
+          ],
+          "header_aliases": [
+            "数据类别"
+          ]
+        },
+        {
+          "id": "c09_f02",
+          "label": "所属业务应用",
+          "comparison": "ordinary_text",
+          "sources": [
+            {
+              "role": "survey",
+              "scope": "full",
+              "header": "所属业务应用",
+              "availability_policy": "VALUE_OR_EMPTY"
+            },
+            {
+              "role": "plan",
+              "scope": "full",
+              "header": "所属业务应用",
+              "availability_policy": "VALUE_OR_EMPTY"
+            },
+            {
+              "role": "report",
+              "scope": "full",
+              "header": "所属业务应用",
+              "availability_policy": "VALUE_OR_EMPTY"
+            },
+            {
+              "role": "plan",
+              "scope": "sample",
+              "header": "所属业务应用",
+              "availability_policy": "VALUE_OR_EMPTY"
+            },
+            {
+              "role": "report",
+              "scope": "sample",
+              "header": "所属业务应用",
+              "availability_policy": "VALUE_OR_EMPTY"
+            }
+          ],
+          "header_aliases": [
+            "所属业务应用"
+          ]
+        },
+        {
+          "id": "c09_f03",
+          "label": "安全防护需求",
+          "comparison": "ordinary_text",
+          "sources": [
+            {
+              "role": "survey",
+              "scope": "full",
+              "header": "安全防护需求",
+              "availability_policy": "VALUE_OR_EMPTY"
+            },
+            {
+              "role": "plan",
+              "scope": "full",
+              "header": "安全防护需求",
+              "availability_policy": "VALUE_OR_EMPTY"
+            },
+            {
+              "role": "report",
+              "scope": "full",
+              "header": "安全防护需求",
+              "availability_policy": "VALUE_OR_EMPTY"
+            },
+            {
+              "role": "plan",
+              "scope": "sample",
+              "header": "安全防护需求",
+              "availability_policy": "VALUE_OR_EMPTY"
+            },
+            {
+              "role": "report",
+              "scope": "sample",
+              "header": "安全防护需求",
+              "availability_policy": "VALUE_OR_EMPTY"
+            }
+          ],
+          "header_aliases": [
+            "安全防护需求"
+          ]
+        },
+        {
+          "id": "c09_f04",
+          "label": "重要程度",
+          "comparison": "ordinary_text",
+          "sources": [
+            {
+              "role": "survey",
+              "scope": "full",
+              "header": "重要程度",
+              "availability_policy": "VALUE_OR_EMPTY"
+            },
+            {
+              "role": "plan",
+              "scope": "full",
+              "header": "重要程度",
+              "availability_policy": "VALUE_OR_EMPTY"
+            },
+            {
+              "role": "report",
+              "scope": "full",
+              "header": "重要程度",
+              "availability_policy": "VALUE_OR_EMPTY"
+            },
+            {
+              "role": "plan",
+              "scope": "sample",
+              "header": "重要程度",
+              "availability_policy": "VALUE_OR_EMPTY"
+            },
+            {
+              "role": "report",
+              "scope": "sample",
+              "header": "重要程度",
+              "availability_policy": "VALUE_OR_EMPTY"
+            }
+          ],
+          "header_aliases": [
+            "重要程度"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "c10",
+      "label": "密码产品",
+      "title_aliases": [
+        "密码产品"
+      ],
+      "fields": [
+        {
+          "id": "c10_f01",
+          "label": "产品/模块名称",
+          "comparison": "entity_name",
+          "sources": [
+            {
+              "role": "survey",
+              "scope": "full",
+              "header": "产品/模块名称",
+              "availability_policy": "VALUE_OR_EMPTY"
+            },
+            {
+              "role": "plan",
+              "scope": "full",
+              "header": "产品/模块名称",
+              "availability_policy": "VALUE_OR_EMPTY"
+            },
+            {
+              "role": "report",
+              "scope": "full",
+              "header": "产品/模块名称",
+              "availability_policy": "VALUE_OR_EMPTY"
+            },
+            {
+              "role": "plan",
+              "scope": "sample",
+              "header": null,
+              "availability_policy": "NOT_APPLICABLE"
+            },
+            {
+              "role": "report",
+              "scope": "sample",
+              "header": null,
+              "availability_policy": "NOT_APPLICABLE"
+            }
+          ],
+          "header_aliases": [
+            "产品/模块名称"
+          ]
+        },
+        {
+          "id": "c10_f02",
+          "label": "生产厂商",
+          "comparison": "ordinary_text",
+          "sources": [
+            {
+              "role": "survey",
+              "scope": "full",
+              "header": "生产厂商",
+              "availability_policy": "VALUE_OR_EMPTY"
+            },
+            {
+              "role": "plan",
+              "scope": "full",
+              "header": "生产厂商",
+              "availability_policy": "VALUE_OR_EMPTY"
+            },
+            {
+              "role": "report",
+              "scope": "full",
+              "header": "生产厂商",
+              "availability_policy": "VALUE_OR_EMPTY"
+            },
+            {
+              "role": "plan",
+              "scope": "sample",
+              "header": null,
+              "availability_policy": "NOT_APPLICABLE"
+            },
+            {
+              "role": "report",
+              "scope": "sample",
+              "header": null,
+              "availability_policy": "NOT_APPLICABLE"
+            }
+          ],
+          "header_aliases": [
+            "生产厂商"
+          ]
+        },
+        {
+          "id": "c10_f03",
+          "label": "证书编号",
+          "comparison": "ordinary_text",
+          "sources": [
+            {
+              "role": "survey",
+              "scope": "full",
+              "header": "商密型号",
+              "availability_policy": "MAPPING_UNRESOLVED"
+            },
+            {
+              "role": "plan",
+              "scope": "full",
+              "header": "商密型号",
+              "availability_policy": "MAPPING_UNRESOLVED"
+            },
+            {
+              "role": "report",
+              "scope": "full",
+              "header": "证书编号",
+              "availability_policy": "VALUE_OR_EMPTY"
+            },
+            {
+              "role": "plan",
+              "scope": "sample",
+              "header": null,
+              "availability_policy": "NOT_APPLICABLE"
+            },
+            {
+              "role": "report",
+              "scope": "sample",
+              "header": null,
+              "availability_policy": "NOT_APPLICABLE"
+            }
+          ],
+          "header_aliases": [
+            "证书编号"
+          ]
+        },
+        {
+          "id": "c10_f04",
+          "label": "密码算法",
+          "comparison": "ordinary_text",
+          "sources": [
+            {
+              "role": "survey",
+              "scope": "full",
+              "header": "密码算法",
+              "availability_policy": "VALUE_OR_EMPTY"
+            },
+            {
+              "role": "plan",
+              "scope": "full",
+              "header": "密码算法",
+              "availability_policy": "VALUE_OR_EMPTY"
+            },
+            {
+              "role": "report",
+              "scope": "full",
+              "header": "密码算法",
+              "availability_policy": "VALUE_OR_EMPTY"
+            },
+            {
+              "role": "plan",
+              "scope": "sample",
+              "header": null,
+              "availability_policy": "NOT_APPLICABLE"
+            },
+            {
+              "role": "report",
+              "scope": "sample",
+              "header": null,
+              "availability_policy": "NOT_APPLICABLE"
+            }
+          ],
+          "header_aliases": [
+            "密码算法"
+          ]
+        },
+        {
+          "id": "c10_f05",
+          "label": "用途",
+          "comparison": "ordinary_text",
+          "sources": [
+            {
+              "role": "survey",
+              "scope": "full",
+              "header": "用途",
+              "availability_policy": "VALUE_OR_EMPTY"
+            },
+            {
+              "role": "plan",
+              "scope": "full",
+              "header": "用途",
+              "availability_policy": "VALUE_OR_EMPTY"
+            },
+            {
+              "role": "report",
+              "scope": "full",
+              "header": "用途",
+              "availability_policy": "VALUE_OR_EMPTY"
+            },
+            {
+              "role": "plan",
+              "scope": "sample",
+              "header": null,
+              "availability_policy": "NOT_APPLICABLE"
+            },
+            {
+              "role": "report",
+              "scope": "sample",
+              "header": null,
+              "availability_policy": "NOT_APPLICABLE"
+            }
+          ],
+          "header_aliases": [
+            "用途"
+          ]
+        },
+        {
+          "id": "c10_f06",
+          "label": "重要程度",
+          "comparison": "ordinary_text",
+          "sources": [
+            {
+              "role": "survey",
+              "scope": "full",
+              "header": "重要程度",
+              "availability_policy": "VALUE_OR_EMPTY"
+            },
+            {
+              "role": "plan",
+              "scope": "full",
+              "header": "重要程度",
+              "availability_policy": "VALUE_OR_EMPTY"
+            },
+            {
+              "role": "report",
+              "scope": "full",
+              "header": "重要\n程度",
+              "availability_policy": "VALUE_OR_EMPTY"
+            },
+            {
+              "role": "plan",
+              "scope": "sample",
+              "header": null,
+              "availability_policy": "NOT_APPLICABLE"
+            },
+            {
+              "role": "report",
+              "scope": "sample",
+              "header": null,
+              "availability_policy": "NOT_APPLICABLE"
+            }
+          ],
+          "header_aliases": [
+            "重要程度",
+            "重要\n程度"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "c11",
+      "label": "安全管理人员",
+      "title_aliases": [
+        "安全管理人员",
+        "安全相关人员"
+      ],
+      "fields": [
+        {
+          "id": "c11_f01",
+          "label": "姓名",
+          "comparison": "entity_name",
+          "sources": [
+            {
+              "role": "survey",
+              "scope": "full",
+              "header": "姓名",
+              "availability_policy": "VALUE_OR_EMPTY"
+            },
+            {
+              "role": "plan",
+              "scope": "full",
+              "header": "姓名",
+              "availability_policy": "VALUE_OR_EMPTY"
+            },
+            {
+              "role": "report",
+              "scope": "full",
+              "header": "姓名",
+              "availability_policy": "VALUE_OR_EMPTY"
+            },
+            {
+              "role": "plan",
+              "scope": "sample",
+              "header": "姓名",
+              "availability_policy": "VALUE_OR_EMPTY"
+            },
+            {
+              "role": "report",
+              "scope": "sample",
+              "header": "姓名",
+              "availability_policy": "VALUE_OR_EMPTY"
+            }
+          ],
+          "header_aliases": [
+            "姓名"
+          ]
+        },
+        {
+          "id": "c11_f02",
+          "label": "岗位/角色",
+          "comparison": "ordinary_text",
+          "sources": [
+            {
+              "role": "survey",
+              "scope": "full",
+              "header": "岗位/角色",
+              "availability_policy": "VALUE_OR_EMPTY"
+            },
+            {
+              "role": "plan",
+              "scope": "full",
+              "header": "岗位/角色",
+              "availability_policy": "VALUE_OR_EMPTY"
+            },
+            {
+              "role": "report",
+              "scope": "full",
+              "header": "岗位/角色",
+              "availability_policy": "VALUE_OR_EMPTY"
+            },
+            {
+              "role": "plan",
+              "scope": "sample",
+              "header": "岗位/角色",
+              "availability_policy": "VALUE_OR_EMPTY"
+            },
+            {
+              "role": "report",
+              "scope": "sample",
+              "header": "岗位/角色",
+              "availability_policy": "VALUE_OR_EMPTY"
+            }
+          ],
+          "header_aliases": [
+            "岗位/角色"
+          ]
+        },
+        {
+          "id": "c11_f03",
+          "label": "联系方式",
+          "comparison": "ordinary_text",
+          "sources": [
+            {
+              "role": "survey",
+              "scope": "full",
+              "header": "联系方式",
+              "availability_policy": "VALUE_OR_EMPTY"
+            },
+            {
+              "role": "plan",
+              "scope": "full",
+              "header": "联系方式",
+              "availability_policy": "VALUE_OR_EMPTY"
+            },
+            {
+              "role": "report",
+              "scope": "full",
+              "header": "联系方式",
+              "availability_policy": "VALUE_OR_EMPTY"
+            },
+            {
+              "role": "plan",
+              "scope": "sample",
+              "header": "联系方式",
+              "availability_policy": "VALUE_OR_EMPTY"
+            },
+            {
+              "role": "report",
+              "scope": "sample",
+              "header": "联系方式",
+              "availability_policy": "VALUE_OR_EMPTY"
+            }
+          ],
+          "header_aliases": [
+            "联系方式"
+          ]
+        },
+        {
+          "id": "c11_f04",
+          "label": "所属单位",
+          "comparison": "ordinary_text",
+          "sources": [
+            {
+              "role": "survey",
+              "scope": "full",
+              "header": "所属单位",
+              "availability_policy": "VALUE_OR_EMPTY"
+            },
+            {
+              "role": "plan",
+              "scope": "full",
+              "header": "所属单位",
+              "availability_policy": "VALUE_OR_EMPTY"
+            },
+            {
+              "role": "report",
+              "scope": "full",
+              "header": "所属单位",
+              "availability_policy": "VALUE_OR_EMPTY"
+            },
+            {
+              "role": "plan",
+              "scope": "sample",
+              "header": "所属单位",
+              "availability_policy": "VALUE_OR_EMPTY"
+            },
+            {
+              "role": "report",
+              "scope": "sample",
+              "header": "所属单位",
+              "availability_policy": "VALUE_OR_EMPTY"
+            }
+          ],
+          "header_aliases": [
+            "所属单位"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "c12",
+      "label": "安全管理文档",
+      "title_aliases": [
+        "安全管理文档"
+      ],
+      "fields": [
+        {
+          "id": "c12_f01",
+          "label": "文档名称",
+          "comparison": "entity_name",
+          "sources": [
+            {
+              "role": "survey",
+              "scope": "full",
+              "header": "文档名称",
+              "availability_policy": "VALUE_OR_EMPTY"
+            },
+            {
+              "role": "plan",
+              "scope": "full",
+              "header": "文档名称",
+              "availability_policy": "VALUE_OR_EMPTY"
+            },
+            {
+              "role": "report",
+              "scope": "full",
+              "header": "文档名称",
+              "availability_policy": "VALUE_OR_EMPTY"
+            },
+            {
+              "role": "plan",
+              "scope": "sample",
+              "header": "文档名称",
+              "availability_policy": "VALUE_OR_EMPTY"
+            },
+            {
+              "role": "report",
+              "scope": "sample",
+              "header": "文档名称",
+              "availability_policy": "VALUE_OR_EMPTY"
+            }
+          ],
+          "header_aliases": [
+            "文档名称"
+          ]
+        },
+        {
+          "id": "c12_f02",
+          "label": "主要内容",
+          "comparison": "ordinary_text",
+          "sources": [
+            {
+              "role": "survey",
+              "scope": "full",
+              "header": "主要内容",
+              "availability_policy": "VALUE_OR_EMPTY"
+            },
+            {
+              "role": "plan",
+              "scope": "full",
+              "header": "主要内容",
+              "availability_policy": "VALUE_OR_EMPTY"
+            },
+            {
+              "role": "report",
+              "scope": "full",
+              "header": "主要内容",
+              "availability_policy": "VALUE_OR_EMPTY"
+            },
+            {
+              "role": "plan",
+              "scope": "sample",
+              "header": "主要内容",
+              "availability_policy": "VALUE_OR_EMPTY"
+            },
+            {
+              "role": "report",
+              "scope": "sample",
+              "header": "主要内容",
+              "availability_policy": "VALUE_OR_EMPTY"
+            }
+          ],
+          "header_aliases": [
+            "主要内容"
+          ]
+        }
+      ]
+    }
+  ],
+  "positions": [
+    {
+      "id": "c01:survey:full",
+      "category_id": "c01",
+      "role": "survey",
+      "scope": "full"
+    },
+    {
+      "id": "c01:plan:full",
+      "category_id": "c01",
+      "role": "plan",
+      "scope": "full"
+    },
+    {
+      "id": "c01:report:full",
+      "category_id": "c01",
+      "role": "report",
+      "scope": "full"
+    },
+    {
+      "id": "c01:plan:sample",
+      "category_id": "c01",
+      "role": "plan",
+      "scope": "sample"
+    },
+    {
+      "id": "c01:report:sample",
+      "category_id": "c01",
+      "role": "report",
+      "scope": "sample"
+    },
+    {
+      "id": "c02:survey:full",
+      "category_id": "c02",
+      "role": "survey",
+      "scope": "full"
+    },
+    {
+      "id": "c02:plan:full",
+      "category_id": "c02",
+      "role": "plan",
+      "scope": "full"
+    },
+    {
+      "id": "c02:report:full",
+      "category_id": "c02",
+      "role": "report",
+      "scope": "full"
+    },
+    {
+      "id": "c02:plan:sample",
+      "category_id": "c02",
+      "role": "plan",
+      "scope": "sample"
+    },
+    {
+      "id": "c02:report:sample",
+      "category_id": "c02",
+      "role": "report",
+      "scope": "sample"
+    },
+    {
+      "id": "c03:survey:full",
+      "category_id": "c03",
+      "role": "survey",
+      "scope": "full"
+    },
+    {
+      "id": "c03:plan:full",
+      "category_id": "c03",
+      "role": "plan",
+      "scope": "full"
+    },
+    {
+      "id": "c03:report:full",
+      "category_id": "c03",
+      "role": "report",
+      "scope": "full"
+    },
+    {
+      "id": "c03:plan:sample",
+      "category_id": "c03",
+      "role": "plan",
+      "scope": "sample"
+    },
+    {
+      "id": "c03:report:sample",
+      "category_id": "c03",
+      "role": "report",
+      "scope": "sample"
+    },
+    {
+      "id": "c04:survey:full",
+      "category_id": "c04",
+      "role": "survey",
+      "scope": "full"
+    },
+    {
+      "id": "c04:plan:full",
+      "category_id": "c04",
+      "role": "plan",
+      "scope": "full"
+    },
+    {
+      "id": "c04:report:full",
+      "category_id": "c04",
+      "role": "report",
+      "scope": "full"
+    },
+    {
+      "id": "c04:plan:sample",
+      "category_id": "c04",
+      "role": "plan",
+      "scope": "sample"
+    },
+    {
+      "id": "c04:report:sample",
+      "category_id": "c04",
+      "role": "report",
+      "scope": "sample"
+    },
+    {
+      "id": "c05:survey:full",
+      "category_id": "c05",
+      "role": "survey",
+      "scope": "full"
+    },
+    {
+      "id": "c05:plan:full",
+      "category_id": "c05",
+      "role": "plan",
+      "scope": "full"
+    },
+    {
+      "id": "c05:report:full",
+      "category_id": "c05",
+      "role": "report",
+      "scope": "full"
+    },
+    {
+      "id": "c05:plan:sample",
+      "category_id": "c05",
+      "role": "plan",
+      "scope": "sample"
+    },
+    {
+      "id": "c05:report:sample",
+      "category_id": "c05",
+      "role": "report",
+      "scope": "sample"
+    },
+    {
+      "id": "c06:survey:full",
+      "category_id": "c06",
+      "role": "survey",
+      "scope": "full"
+    },
+    {
+      "id": "c06:plan:full",
+      "category_id": "c06",
+      "role": "plan",
+      "scope": "full"
+    },
+    {
+      "id": "c06:report:full",
+      "category_id": "c06",
+      "role": "report",
+      "scope": "full"
+    },
+    {
+      "id": "c06:plan:sample",
+      "category_id": "c06",
+      "role": "plan",
+      "scope": "sample"
+    },
+    {
+      "id": "c06:report:sample",
+      "category_id": "c06",
+      "role": "report",
+      "scope": "sample"
+    },
+    {
+      "id": "c07:survey:full",
+      "category_id": "c07",
+      "role": "survey",
+      "scope": "full"
+    },
+    {
+      "id": "c07:plan:full",
+      "category_id": "c07",
+      "role": "plan",
+      "scope": "full"
+    },
+    {
+      "id": "c07:report:full",
+      "category_id": "c07",
+      "role": "report",
+      "scope": "full"
+    },
+    {
+      "id": "c07:plan:sample",
+      "category_id": "c07",
+      "role": "plan",
+      "scope": "sample"
+    },
+    {
+      "id": "c07:report:sample",
+      "category_id": "c07",
+      "role": "report",
+      "scope": "sample"
+    },
+    {
+      "id": "c08:survey:full",
+      "category_id": "c08",
+      "role": "survey",
+      "scope": "full"
+    },
+    {
+      "id": "c08:plan:full",
+      "category_id": "c08",
+      "role": "plan",
+      "scope": "full"
+    },
+    {
+      "id": "c08:report:full",
+      "category_id": "c08",
+      "role": "report",
+      "scope": "full"
+    },
+    {
+      "id": "c08:plan:sample",
+      "category_id": "c08",
+      "role": "plan",
+      "scope": "sample"
+    },
+    {
+      "id": "c08:report:sample",
+      "category_id": "c08",
+      "role": "report",
+      "scope": "sample"
+    },
+    {
+      "id": "c09:survey:full",
+      "category_id": "c09",
+      "role": "survey",
+      "scope": "full"
+    },
+    {
+      "id": "c09:plan:full",
+      "category_id": "c09",
+      "role": "plan",
+      "scope": "full"
+    },
+    {
+      "id": "c09:report:full",
+      "category_id": "c09",
+      "role": "report",
+      "scope": "full"
+    },
+    {
+      "id": "c09:plan:sample",
+      "category_id": "c09",
+      "role": "plan",
+      "scope": "sample"
+    },
+    {
+      "id": "c09:report:sample",
+      "category_id": "c09",
+      "role": "report",
+      "scope": "sample"
+    },
+    {
+      "id": "c10:survey:full",
+      "category_id": "c10",
+      "role": "survey",
+      "scope": "full"
+    },
+    {
+      "id": "c10:plan:full",
+      "category_id": "c10",
+      "role": "plan",
+      "scope": "full"
+    },
+    {
+      "id": "c10:report:full",
+      "category_id": "c10",
+      "role": "report",
+      "scope": "full"
+    },
+    {
+      "id": "c11:survey:full",
+      "category_id": "c11",
+      "role": "survey",
+      "scope": "full"
+    },
+    {
+      "id": "c11:plan:full",
+      "category_id": "c11",
+      "role": "plan",
+      "scope": "full"
+    },
+    {
+      "id": "c11:report:full",
+      "category_id": "c11",
+      "role": "report",
+      "scope": "full"
+    },
+    {
+      "id": "c11:plan:sample",
+      "category_id": "c11",
+      "role": "plan",
+      "scope": "sample"
+    },
+    {
+      "id": "c11:report:sample",
+      "category_id": "c11",
+      "role": "report",
+      "scope": "sample"
+    },
+    {
+      "id": "c12:survey:full",
+      "category_id": "c12",
+      "role": "survey",
+      "scope": "full"
+    },
+    {
+      "id": "c12:plan:full",
+      "category_id": "c12",
+      "role": "plan",
+      "scope": "full"
+    },
+    {
+      "id": "c12:report:full",
+      "category_id": "c12",
+      "role": "report",
+      "scope": "full"
+    },
+    {
+      "id": "c12:plan:sample",
+      "category_id": "c12",
+      "role": "plan",
+      "scope": "sample"
+    },
+    {
+      "id": "c12:report:sample",
+      "category_id": "c12",
+      "role": "report",
+      "scope": "sample"
+    }
+  ]
+}

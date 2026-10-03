@@ -94,6 +94,27 @@ class ModelConfig(Base):
     timeout: Mapped[int] = mapped_column(Integer, default=120)
 
 
+class ModelService(Base):
+    __tablename__ = 'model_services'
+    name: Mapped[str] = mapped_column(String(150))
+    base_url: Mapped[str] = mapped_column(Text, unique=True)
+    protocol: Mapped[str] = mapped_column(String(40), default='chat_completions')
+    models: Mapped[list] = mapped_column(JSON, default=list)
+    external: Mapped[bool] = mapped_column(Boolean, default=False)
+    enabled: Mapped[bool] = mapped_column(Boolean, default=True)
+    version: Mapped[int] = mapped_column(Integer, default=1)
+
+
+class UserModelProfile(Base):
+    __tablename__ = 'user_model_profiles'
+    owner_id: Mapped[str] = mapped_column(ForeignKey('users.id'), index=True)
+    service_id: Mapped[str] = mapped_column(ForeignKey('model_services.id'))
+    model: Mapped[str] = mapped_column(String(150))
+    key_encrypted: Mapped[str] = mapped_column(Text)
+    enabled: Mapped[bool] = mapped_column(Boolean, default=True)
+    version: Mapped[int] = mapped_column(Integer, default=1)
+
+
 class Run(Base):
     __tablename__ = 'runs'
     __table_args__ = (UniqueConstraint('project_id', 'request_key'),)
@@ -120,6 +141,39 @@ class Task(Base):
     error: Mapped[str] = mapped_column(Text, default='')
     output: Mapped[dict] = mapped_column(JSON, default=dict)
     finished_at: Mapped[float | None] = mapped_column(Float)
+
+
+class RedactionBatch(Base):
+    __tablename__ = 'redaction_batches'
+    run_id: Mapped[str] = mapped_column(ForeignKey('runs.id'), unique=True)
+    version: Mapped[int] = mapped_column(Integer, default=1)
+    token_map_encrypted: Mapped[str] = mapped_column(Text, default='')
+    terms_encrypted: Mapped[str] = mapped_column(Text, default='')
+    list_hash: Mapped[str] = mapped_column(String(64), default='')
+    reviewed_by: Mapped[str | None] = mapped_column(ForeignKey('users.id'))
+    reviewed_at: Mapped[float | None] = mapped_column(Float)
+
+
+class RedactionApproval(Base):
+    __tablename__ = 'redaction_approvals'
+    __table_args__ = (UniqueConstraint('run_id', 'task_id'),)
+    run_id: Mapped[str] = mapped_column(ForeignKey('runs.id'), index=True)
+    task_id: Mapped[str] = mapped_column(ForeignKey('tasks.id'), index=True)
+    request_hash: Mapped[str] = mapped_column(String(64))
+    reviewer_id: Mapped[str] = mapped_column(ForeignKey('users.id'))
+    list_hash: Mapped[str] = mapped_column(String(64))
+
+
+class ReviewDecision(Base):
+    __tablename__ = 'review_decisions'
+    __table_args__ = (UniqueConstraint('run_id', 'row_id'),)
+    run_id: Mapped[str] = mapped_column(ForeignKey('runs.id'), index=True)
+    row_id: Mapped[str] = mapped_column(String(64))
+    reviewer_id: Mapped[str] = mapped_column(ForeignKey('users.id'))
+    status: Mapped[str] = mapped_column(String(30), default='pending')
+    note: Mapped[str] = mapped_column(Text, default='')
+    version: Mapped[int] = mapped_column(Integer, default=1)
+    updated_at: Mapped[float] = mapped_column(Float, default=time.time)
 
 
 class Issue(Base):

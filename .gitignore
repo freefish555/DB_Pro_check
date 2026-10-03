@@ -14,4 +14,10 @@ data/
 test-results/
 playwright-report/
 *.tsbuildinfo
+.worktrees/
+db-pro-test-*/
+review-model-test-*/
+appendix-api-*/
+runtime-audit-*/
+tmp*/
 

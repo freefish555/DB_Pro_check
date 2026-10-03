@@ -13,7 +13,7 @@ from openpyxl import Workbook
 
 from backend.app import app
 from backend.ai import evaluate
-from backend.db import Session, Issue, Knowledge, ModelConfig
+from backend.db import DATA, Session, Issue, Knowledge, ModelConfig
 from backend.catalog import import_workbook, select_requirements, selection_summary
 from backend.checks import compare_assets, match_requirement, risk_review
 from backend.documents import parse_docx
@@ -92,7 +92,7 @@ def test_sag_selection_and_manual_match():
 
 def test_auth_upload_run_and_review():
     with TestClient(app) as client:
-        password=(Path(os.environ['REVIEW_DATA_DIR'])/'bootstrap-admin.txt').read_text(encoding='utf-8').split('初始密码：')[1].splitlines()[0]
+        password=(DATA/'bootstrap-admin.txt').read_text(encoding='utf-8').split('初始密码：')[1].splitlines()[0]
         response=client.post('/api/login',json={'username':'admin','password':password})
         assert response.status_code==200
         csrf=response.json()['csrf'];headers={'X-CSRF-Token':csrf}
@@ -110,7 +110,7 @@ def test_auth_upload_run_and_review():
         issue_rows=client.get(f'/api/projects/{project["id"]}/issues').json()
         assert issue_rows==[]
         with Session() as db:
-            row=Issue(project_id=project['id'],chapter='APP_D',category='writing',title='合成问题',description='=1+1',suggestion='人工修正',object_name='核心交换机1',evidence=[{'source':'附录D表1行2','quote':'合成原文'}],machine={})
+            row=Issue(project_id=project['id'],run_id=run.json()['id'],chapter='APP_D',category='writing',title='合成问题',description='=1+1',suggestion='人工修正',object_name='核心交换机1',evidence=[{'source':'附录D表1行2','quote':'合成原文'}],machine={})
             db.add(row);db.commit();iid=row.id
         current=client.get(f'/api/projects/{project["id"]}/issues?chapter=APP_D').json()[0]
         updated=client.patch(f'/api/projects/{project["id"]}/issues/{iid}',json={'version':current['version'],'status':'confirmed','note':'已核对'},headers=headers)
@@ -121,6 +121,24 @@ def test_auth_upload_run_and_review():
         from openpyxl import load_workbook
         sheet=load_workbook(io.BytesIO(exported.content)).active
         assert sheet['D2'].value=="'=1+1" and sheet['H2'].value=='已核对'
+
+
+def test_reupload_uses_saved_document_version_in_block_source():
+    from backend.db import Document as StoredDocument
+    with TestClient(app) as client:
+        password=(DATA/'bootstrap-admin.txt').read_text(encoding='utf-8').split('初始密码：')[1].splitlines()[0]
+        login=client.post('/api/login',json={'username':'admin','password':password}).json()
+        headers={'X-CSRF-Token':login['csrf']}
+        project=client.post('/api/projects',json={'name':'版本来源测试'},headers=headers).json()
+        data=word('report')
+        for version in (1,2):
+            response=client.post(f'/api/projects/{project["id"]}/documents',data={'role':'report'},
+                                 files={'file':('same.docx',data)},headers=headers)
+            assert response.status_code==200,response.text
+            assert response.json()['version']==version
+        with Session() as db:
+            rows=db.query(StoredDocument).filter_by(project_id=project['id'],role='report').order_by(StoredDocument.version).all()
+            assert [r.parsed['blocks'][0]['source']['document_version'] for r in rows]==[1,2]
 
 
 def test_model_contract_rejects_fabricated_quote(monkeypatch):
@@ -138,10 +156,25 @@ def test_model_contract_rejects_fabricated_quote(monkeypatch):
         evaluate(record,requirement,'strict',{'base_url':'http://127.0.0.1:9999/v1','model':'local','timeout':10},'')
 
 
-def test_appendix_run_separates_three_issue_types(monkeypatch):
+def test_model_contract_requires_identity_and_structured_review_fields(monkeypatch):
+    import json
+    original=httpx.Client
+    record={'id':'r1','text':'evidence text','verdict':'supported'}
+    requirement={'text':'requirement','points':[{'id':'p1','text':'point'}],'decision':'decision'}
+    answer={'point_results':[{'point_id':'p1','coverage':'covered','quote':'evidence text','reason':''}],
+            'verdict_review':{'status':'supported','reason':'','quote':'evidence text'},'writing':[]}
+    def handler(_):return httpx.Response(200,json={'choices':[{'message':{'content':json.dumps(answer)}}]})
+    transport=httpx.MockTransport(handler)
+    monkeypatch.setattr(httpx,'Client',lambda **kwargs: original(transport=transport,**kwargs))
+    with pytest.raises(ValueError):
+        evaluate(record,requirement,'strict',{'base_url':'http://127.0.0.1:9999/v1','model':'local','timeout':10},'')
+
+
+def test_appendix_run_waits_for_redaction_gate(monkeypatch):
     import importlib
     import time
     module=importlib.import_module('backend.app')
+    module.startup()
     source=catalog(3,['G'])
     with Session() as db:
         k=Knowledge(filename='synthetic.xlsx',sha256='synthetic-appendix',family='general',level=3,profile='',status='published',content=source)
@@ -149,26 +182,16 @@ def test_appendix_run_separates_three_issue_types(monkeypatch):
         db.add(ModelConfig(base_url='http://127.0.0.1:9999/v1',model='mock',enabled=True,external=False,timeout=10))
         db.commit()
     def fake(record,requirement,mode,model,key):
-        assert mode=='strict' and requirement['decision']
-        return {'point_results':[{'point_id':requirement['points'][0]['id'],'coverage':'missing','quote':'','reason':'缺少检查过程'}],
-                'verdict_review':{'status':'contradicted','reason':'结论缺证据','quote':''},
-                'writing':[{'type':'unclear','quote':'设备容量足够','suggestion':'写出检查依据'}]}
+        raise AssertionError('未完成脱敏授权时不能调用模型')
     monkeypatch.setattr(module,'evaluate',fake)
     with TestClient(app) as client:
-        password=(Path(os.environ['REVIEW_DATA_DIR'])/'bootstrap-admin.txt').read_text(encoding='utf-8').split('初始密码：')[1].splitlines()[0]
+        password=(DATA/'bootstrap-admin.txt').read_text(encoding='utf-8').split('初始密码：')[1].splitlines()[0]
         csrf=client.post('/api/login',json={'username':'admin','password':password}).json()['csrf']
         headers={'X-CSRF-Token':csrf}
         project=client.post('/api/projects',json={'name':'附录D合成项目'},headers=headers).json()
         upload=client.post(f'/api/projects/{project["id"]}/documents',data={'role':'report'},files={'file':('report.docx',word('report'))},headers=headers)
         assert upload.status_code==200
         run=client.post(f'/api/projects/{project["id"]}/runs',json={'modules':['appendix_d'],'mode':'strict','request_key':'ai-test'},headers=headers)
-        assert run.status_code==200,run.text
-        until=time.time()+5
-        while time.time()<until:
-            state=client.get(f'/api/projects/{project["id"]}/runs/{run.json()["id"]}').json()
-            if state['tasks'][0]['status']=='done':break
-            time.sleep(.05)
-        assert state['tasks'][0]['status']=='done',state
-        categories={x['category'] for x in client.get(f'/api/projects/{project["id"]}/issues?chapter=APP_D').json()}
-        assert categories=={'description_coverage','verdict','writing'}
+        assert run.status_code==422,run.text
+        assert any('脱敏' in x for x in run.json()['detail']['blockers'])
 
