@@ -1,6 +1,11 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { createRoot } from "react-dom/client";
 import "./style.css";
+import ConsistencyReview from "./ConsistencyReview";
+import AppendixReview from "./AppendixReview";
+import KeyInformation from "./KeyInformation";
+import ChapterContent, { type ChapterContentData } from "./ChapterContent";
+import { activeIssueRunId, keepVisibleSelection, visibleIssues as filterIssues } from "./issueView";
 
 type Any = Record<string, any>;
 const labels: Any = {
@@ -13,7 +18,7 @@ const labels: Any = {
   assets_sample: "方案与报告抽选对象",
   appendix_d: "附录D结果记录",
   high_risk: "高风险与重大隐患",
-  lenient: "宽松审核",
+  lenient: "常规审核",
   strict: "严格审核",
 };
 const extNames: Any = {
@@ -21,7 +26,6 @@ const extNames: Any = {
   mobile: "移动互联",
   iot: "物联网",
   ics: "工业控制",
-  power: "电力行业",
   bigdata: "大数据",
 };
 const stateNames: Any = {
@@ -32,8 +36,8 @@ const stateNames: Any = {
   ambiguous: "需要匹配",
   pending: "待复核",
   confirmed: "已确认",
-  rejected: "已排除",
-  needs_evidence: "待补证",
+  rejected: "误报",
+  needs_evidence: "待核实",
   resolved: "已解决",
   queued: "排队中",
   running: "处理中",
@@ -54,13 +58,21 @@ const categoryNames: Any = {
   high_risk_screening: "高风险候选",
   major_hazard_table: "重大隐患表",
 };
+const riskSummaryColumns = [
+  "序号", "问题编号", "报告安全问题描述", "报告4.3整体测评描述", "报告第5章问题风险分析",
+  "报告涉及对象", "高风险条款号", "适用范围", "报告判定", "是否重大风险",
+  "指引-场景/问题描述", "指引-可能的缓解措施", "指引-风险评价-参考",
+];
 const CODES: [string, string][] = [
   ["ALL", "全部问题"],
-  ["CROSS_DOCUMENT", "跨文档一致性"],
-  ["FULL_TEXT", "全文规范性"],
+  ["CROSS_DOCUMENT", "前后一致性"],
+  ["FULL_TEXT", "规范性问题"],
+  ["COVER", "封面"],
   ["BASIC_INFO", "基本信息"],
+  ["STATEMENT", "声明"],
   ["CONCLUSION", "结论页"],
   ["MAJOR_HAZARD", "重大风险隐患"],
+  ["RECTIFICATION", "整改建议"],
   ...Array.from(
     { length: 8 },
     (_, i) =>
@@ -72,6 +84,7 @@ const CODES: [string, string][] = [
   ..."ABCDEFGH"
     .split("")
     .map((x) => [`APP_${x}`, `附录${x}`] as [string, string]),
+  ["OTHER", "未归类内容"],
 ];
 const configured = new Set([
   "ALL",
@@ -117,9 +130,7 @@ function App() {
     [message, setMessage] = useState(""),
     [busy, setBusy] = useState(false);
   const [docs, setDocs] = useState<Any[]>([]),
-    [facts, setFacts] = useState<Any>({}),
-    [assetScope, setAssetScope] = useState("full"),
-    [assets, setAssets] = useState<Any>({ rows: [], issues: [] });
+    [facts, setFacts] = useState<Any>({});
   const [knowledge, setKnowledge] = useState<Any[]>([]),
     [requirements, setRequirements] = useState<Any>({
       summary: { count: 0 },
@@ -128,11 +139,23 @@ function App() {
     [records, setRecords] = useState<Any>({ items: [] });
   const [runs, setRuns] = useState<Any[]>([]),
     [runDetail, setRunDetail] = useState<Any | null>(null),
+    [redactionPreview, setRedactionPreview] = useState<Any | null>(null),
     [issues, setIssues] = useState<Any[]>([]),
     [chapter, setChapter] = useState("ALL"),
-    [selectedIssue, setSelectedIssue] = useState<Any | null>(null);
+    [selectedIssue, setSelectedIssue] = useState<Any | null>(null),
+    [selectedIssueIds, setSelectedIssueIds] = useState<string[]>([]),
+    [batchNote, setBatchNote] = useState(""),
+    [issueCoverage, setIssueCoverage] = useState<Any[]>([]),
+    [chapterContent, setChapterContent] = useState<ChapterContentData | null>(null);
   const [risk, setRisk] = useState<Any>({ candidates: [] }),
+    [riskRunId, setRiskRunId] = useState(""),
     [model, setModel] = useState<Any>({}),
+    [modelServices, setModelServices] = useState<Any[]>([]),
+    [modelProfiles, setModelProfiles] = useState<Any[]>([]),
+    [modelServiceDraft, setModelServiceDraft] = useState<Any>({ name: "", base_url: "", models: "", enabled: true }),
+    [modelProfileDraft, setModelProfileDraft] = useState<Any>({ service_id: "", model: "", api_key: "" }),
+    [modelProfileEditId, setModelProfileEditId] = useState(""),
+    [selectedModelProfile, setSelectedModelProfile] = useState(""),
     [modules, setModules] = useState<string[]>([
       "assets_full",
       "appendix_d",
@@ -148,12 +171,19 @@ function App() {
     }),
     [users, setUsers] = useState<Any[]>([]);
   const [note, setNote] = useState(""),
+    [redactionReviewedHashes, setRedactionReviewedHashes] = useState<string[]>([]),
+    [redactionExtraTerms, setRedactionExtraTerms] = useState(""),
+    [redactionExtraKind, setRedactionExtraKind] = useState("name"),
     [recordQuery, setRecordQuery] = useState(""),
     [recordUnmatchedOnly, setRecordUnmatchedOnly] = useState(false),
     [issueStatus, setIssueStatus] = useState("ALL"),
+    [issueRunId, setIssueRunId] = useState(""),
+    [issueModule, setIssueModule] = useState(""),
     [issueQuery, setIssueQuery] = useState(""),
+    [issueCategory, setIssueCategory] = useState(""),
     [passwords, setPasswords] = useState({ old: "", new: "" }),
     [settings, setSettings] = useState<Any>({}),
+    [redactionDraft, setRedactionDraft] = useState<Any>({}),
     [auditRows, setAuditRows] = useState<Any[]>([]);
   const action = async (fn: () => Promise<any>, ok = "操作完成") => {
     setBusy(true);
@@ -173,10 +203,11 @@ function App() {
     setProjects(ps);
     return ps;
   };
+  const currentProjectId = useRef(project?.id);
+  currentProjectId.current = project?.id;
   const load = async (
     p: Any,
     screen = view,
-    scope = assetScope,
     tab = chapter,
   ) => {
     const pid = p.id;
@@ -184,15 +215,29 @@ function App() {
       api(`/projects/${pid}/documents`),
       api(`/projects/${pid}/facts`),
       api(`/projects/${pid}/runs`),
-      api(`/projects/${pid}/issues?chapter=${tab}`),
     ]);
+    if (currentProjectId.current !== pid) return;
+    const activeRunId = activeIssueRunId(common[2], issueRunId);
+    if (screen === "issues" && issueRunId !== activeRunId) setIssueRunId(activeRunId);
     setDocs(common[0]);
     setFacts(common[1]);
     setRuns(common[2]);
-    setIssues(common[3]);
+    if (screen === "issues" || screen === "overview") {
+      const issueRows = await api(`/projects/${pid}/issues?run_id=${encodeURIComponent(activeRunId)}${issueModule ? `&module=${encodeURIComponent(issueModule)}` : ""}`);
+      if (currentProjectId.current !== pid) return;
+      setIssues(issueRows);
+      if (screen === "issues") {
+        const [coverage, content] = await Promise.all([
+          api(`/projects/${pid}/issues/coverage?run_id=${encodeURIComponent(activeRunId)}`),
+          tab !== "ALL" ? api(`/projects/${pid}/issues/chapter-content?run_id=${encodeURIComponent(activeRunId)}&chapter=${encodeURIComponent(tab)}`) : Promise.resolve(null),
+        ]);
+        if (currentProjectId.current !== pid) return;
+        setIssueCoverage(coverage.chapters || []);
+        setChapterContent(content);
+      }
+    }
     setSettings(p.config || {});
-    if (screen === "assets")
-      setAssets(await api(`/projects/${pid}/assets?scope=${scope}`));
+    setRedactionDraft(p.config?.redaction_terms || {});
     if (screen === "appendix") {
       const [a, b] = await Promise.all([
         api(`/projects/${pid}/requirements`),
@@ -201,10 +246,20 @@ function App() {
       setRequirements(a);
       setRecords(b);
     }
-    if (screen === "risk") setRisk(await api(`/projects/${pid}/risk`));
+    if (screen === "risk") {
+      const riskRuns = common[2].filter((run: Any) => run.modules?.includes("high_risk") && ["done", "partial"].includes(run.status));
+      const riskRun = riskRuns.find((run: Any) => run.id === riskRunId) || riskRuns[0];
+      setRiskRunId(riskRun?.id || "");
+      setRisk(riskRun ? await api(`/projects/${pid}/runs/${riskRun.id}/risk`) : { candidates: [] });
+    }
     if (screen === "audit") setAuditRows(await api(`/projects/${pid}/audit`));
     if (screen === "knowledge") setKnowledge(await api("/knowledge"));
-    if (screen === "model" && user?.admin) setModel(await api("/model"));
+    if (screen === "model") {
+      const [services, profiles] = await Promise.all([api("/model-services"), api("/me/model-profiles")]);
+      setModelServices(services);
+      setModelProfiles(profiles);
+      setSelectedModelProfile((previous) => previous || profiles.find((p: Any) => p.enabled)?.id || "");
+    }
     if (screen === "users" && user?.admin) setUsers(await api("/users"));
   };
   useEffect(() => {
@@ -219,7 +274,7 @@ function App() {
   }, []);
   useEffect(() => {
     if (project) load(project).catch((e) => setError(e.message));
-  }, [project?.id, view, assetScope, chapter]);
+  }, [project?.id, view, chapter, issueRunId, issueModule]);
   useEffect(() => {
     if (!project || (view !== "runs" && view !== "overview")) return;
     const id = setInterval(() => load(project).catch(() => {}), 5000);
@@ -229,6 +284,7 @@ function App() {
     setView(next);
     setError("");
     setSelectedIssue(null);
+    setSelectedIssueIds([]);
   };
   const loginSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -289,14 +345,10 @@ function App() {
     );
   const docFor = (role: string): Any =>
     docs.find((d) => d.role === role) as any;
-  const visibleIssues = issues.filter(
-    (x) =>
-      (issueStatus === "ALL" || x.status === issueStatus) &&
-      (!issueQuery.trim() ||
-        `${x.title} ${x.description} ${x.object_name}`.includes(
-          issueQuery.trim(),
-        )),
+  const visibleIssues = filterIssues(issues, chapter, issueStatus, issueQuery).filter(
+    (x) => !issueCategory || x.category === issueCategory,
   );
+  const visibleSelectedIssueIds = keepVisibleSelection(selectedIssueIds, visibleIssues);
   const saveMatch = (matchKey: string, requirementKey: string) =>
     action(async () => {
       const matches = {
@@ -313,6 +365,7 @@ function App() {
   const nav = [
     ["overview", "总览", "◫"],
     ["documents", "文档与提取", "▤"],
+    ["key-info", "关键信息", "▥"],
     ["assets", "一致性审核", "⇄"],
     ["appendix", "附录D审核", "▦"],
     ["risk", "高风险核查", "△"],
@@ -321,9 +374,9 @@ function App() {
     ["knowledge", "核查点库", "◇"],
     ["settings", "项目设置", "⚙"],
     ["account", "我的账号", "♙"],
+    ["model", "我的模型", "⌘"],
     ...(user.admin
       ? [
-          ["model", "模型配置", "⌘"],
           ["users", "用户管理", "♙"],
         ]
       : []),
@@ -343,11 +396,13 @@ function App() {
           <span>当前项目</span>
           <select
             value={project?.id || ""}
-            onChange={(e) =>
+            onChange={(e) => {
+              setIssueRunId(""); setIssues([]); setIssueCoverage([]); setChapterContent(null);
+              setSelectedIssue(null); setSelectedIssueIds([]); setError("");
               setProject(
                 (projects.find((x) => x.id === e.target.value) || null) as any,
-              )
-            }
+              );
+            }}
           >
             <option value="">选择项目</option>
             {projects.map((p) => (
@@ -522,9 +577,10 @@ function App() {
                       />
                       {[
                         ["01", "上传并确认三份文档", "documents"],
-                        ["02", "检查资产与结果记录", "assets"],
-                        ["03", "配置模型和审核任务", "runs"],
-                        ["04", "复核问题并导出", "issues"],
+                        ["02", "核对三文档关键信息", "key-info"],
+                        ["03", "检查资产与结果记录", "assets"],
+                        ["04", "配置模型和审核任务", "runs"],
+                        ["05", "复核问题并导出", "issues"],
                       ].map(([no, text, dest]) => (
                         <button
                           className="step-row"
@@ -639,251 +695,15 @@ function App() {
                   </section>
                 </>
               )}
+              {view === "key-info" && <KeyInformation projectId={project.id} api={api} />}
               {view === "assets" && (
-                <>
-                  <PageTitle
-                    kicker="CONSISTENCY REVIEW"
-                    title="三文档一致性审核"
-                    desc="同类型、同对象逐一比对。来源缺失、同名和字段差异均进入人工复核。"
-                  />
-                  <div className="segmented">
-                    <button
-                      className={assetScope === "full" ? "on" : ""}
-                      onClick={() => setAssetScope("full")}
-                    >
-                      全对象 · 调研表 / 方案 / 报告
-                    </button>
-                    <button
-                      className={assetScope === "sample" ? "on" : ""}
-                      onClick={() => setAssetScope("sample")}
-                    >
-                      抽选对象 · 方案 / 报告
-                    </button>
-                  </div>
-                  {assets.blocked ? (
-                    <Notice text={assets.blocked} />
-                  ) : (
-                    <>
-                      <div className="stats compact">
-                        <Stat
-                          label="对照对象"
-                          value={assets.rows?.length || 0}
-                          hint="按对象汇总"
-                        />
-                        <Stat
-                          label="一致"
-                          value={
-                            assets.rows?.filter(
-                              (x: Any) => x.status === "consistent",
-                            ).length || 0
-                          }
-                          hint="属性均相同"
-                        />
-                        <Stat
-                          label="待复核"
-                          value={assets.issues?.length || 0}
-                          hint="缺失 / 差异 / 同名"
-                        />
-                      </div>
-                      <div className="panel table-panel">
-                        <table>
-                          <thead>
-                            <tr>
-                              <th>对象名称</th>
-                              <th>类别</th>
-                              <th>对照结果</th>
-                              <th>来源与别名确认</th>
-                              <th>差异字段</th>
-                            </tr>
-                          </thead>
-                          <tbody>
-                            {assets.rows?.map((row: Any, i: number) => (
-                              <tr key={i}>
-                                <td>
-                                  <b>{row.name}</b>
-                                </td>
-                                <td>{row.type}</td>
-                                <td>
-                                  <Badge
-                                    text={stateNames[row.status]}
-                                    tone={
-                                      row.status === "consistent"
-                                        ? "good"
-                                        : "warn"
-                                    }
-                                  />
-                                </td>
-                                <td>
-                                  <details>
-                                    <summary>
-                                      {Object.keys(row.sources || {})
-                                        .map((x) => labels[x])
-                                        .join(" / ")}
-                                    </summary>
-                                    {Object.entries(row.sources || {}).flatMap(
-                                      ([role, items]: [string, any]) =>
-                                        (items as Any[]).map((a) => (
-                                          <AliasEditor
-                                            key={a.alias_key}
-                                            role={labels[role]}
-                                            asset={a}
-                                            current={
-                                              project.config?.aliases?.[
-                                                a.alias_key
-                                              ] || a.name
-                                            }
-                                            onSave={(value) =>
-                                              action(async () => {
-                                                const aliases = {
-                                                  ...(project.config?.aliases ||
-                                                    {}),
-                                                  [a.alias_key]: value,
-                                                };
-                                                const p = await api(
-                                                  `/projects/${project.id}`,
-                                                  "PATCH",
-                                                  {
-                                                    version: project.version,
-                                                    aliases,
-                                                  },
-                                                );
-                                                setProject(p);
-                                                setAssets(
-                                                  await api(
-                                                    `/projects/${p.id}/assets?scope=${assetScope}`,
-                                                  ),
-                                                );
-                                              }, "对象别名已保存")
-                                            }
-                                          />
-                                        )),
-                                    )}
-                                  </details>
-                                </td>
-                                <td>
-                                  {row.differences
-                                    ?.map((d: Any) => d.field)
-                                    .join("、") || "—"}
-                                </td>
-                              </tr>
-                            ))}
-                          </tbody>
-                        </table>
-                        {!assets.rows?.length && (
-                          <Empty text="尚无可比对对象" />
-                        )}
-                      </div>
-                    </>
-                  )}
-                </>
+                <ConsistencyReview key={project.id} projectId={project.id} runs={runs}
+                  api={api} onRefresh={() => load(project, "assets")} />
               )}
-              {view === "appendix" && (
-                <>
-                  <PageTitle
-                    kicker="APPENDIX D"
-                    title="结果记录逐项审核"
-                    desc="先匹配测评项与核查点；描述覆盖、符合性判定和文字问题分别记录。"
-                  />
-                  <div className="stats compact">
-                    <Stat
-                      label="结果记录"
-                      value={records.count || 0}
-                      hint="来自报告附录D"
-                    />
-                    <Stat
-                      label="当前核查点"
-                      value={requirements.summary?.count || 0}
-                      hint="按 S / A / G 与扩展选择"
-                    />
-                    <Stat
-                      label="未匹配"
-                      value={
-                        records.items?.filter(
-                          (x: Any) => x.match.status !== "matched",
-                        ).length || 0
-                      }
-                      hint="需人工选定测评项"
-                    />
-                  </div>
-                  <div className="panel">
-                    <SectionTitle
-                      title="记录与依据对应"
-                      subtitle="模糊结果只是候选，不自动送入 AI。"
-                    />
-                    {records.blocked && <Notice text={records.blocked} />}
-                    <div className="issue-filters">
-                      <input
-                        aria-label="搜索结果记录"
-                        placeholder="搜索对象、测评项或原文"
-                        value={recordQuery}
-                        onChange={(e) => setRecordQuery(e.target.value)}
-                      />
-                      <label className="checkbox">
-                        <input
-                          type="checkbox"
-                          checked={recordUnmatchedOnly}
-                          onChange={(e) =>
-                            setRecordUnmatchedOnly(e.target.checked)
-                          }
-                        />
-                        仅看待匹配
-                      </label>
-                    </div>
-                    <div className="record-list">
-                      {records.items
-                        ?.filter(
-                          (x: Any) =>
-                            (!recordUnmatchedOnly ||
-                              x.match.status !== "matched") &&
-                            (!recordQuery.trim() ||
-                              `${x.record.object} ${x.record.requirement} ${x.record.text}`.includes(
-                                recordQuery.trim(),
-                              )),
-                        )
-                        .map((x: Any) => (
-                          <div className="record-row" key={x.record.id}>
-                            <div>
-                              <strong>
-                                {x.record.object} ·{" "}
-                                {x.record.requirement.slice(0, 68)}
-                              </strong>
-                              <small>
-                                {x.record.source} · 原符合情况：
-                                {x.record.verdict || "未填"}
-                              </small>
-                              <p>
-                                {x.record.text.slice(0, 180)}
-                                {x.record.text.length > 180 ? "…" : ""}
-                              </p>
-                            </div>
-                            <div>
-                              <Badge
-                                text={
-                                  x.match.status === "matched"
-                                    ? "已匹配"
-                                    : "待确认"
-                                }
-                                tone={
-                                  x.match.status === "matched" ? "good" : "warn"
-                                }
-                              />
-                              <RequirementPicker
-                                record={x.record}
-                                current={x.match.requirement}
-                                candidates={x.match.candidates || []}
-                                requirements={requirements.items || []}
-                                onPick={(key) => saveMatch(x.match_key, key)}
-                              />
-                            </div>
-                          </div>
-                        ))}
-                      {!records.items?.length && (
-                        <Empty text="上传并解析测评报告后显示附录D记录" />
-                      )}
-                    </div>
-                  </div>
-                </>
-              )}
+              {view === "appendix" && <>
+                <PageTitle kicker="APPENDIX D" title="附录 D 结果记录审核" desc="按层面、对象和复核状态筛选结果记录，展开 J-N 问题证据并保留人工复核。" />
+                <AppendixReview projectId={project.id} runs={runs} api={api} onRefresh={() => load(project, "appendix")} />
+              </>}
               {view === "risk" && (
                 <>
                   <PageTitle
@@ -908,7 +728,42 @@ function App() {
                       hint="不自动判定重大隐患"
                     />
                   </div>
+                  <div className="panel inline risk-run-picker">
+                    <label>审核批次
+                      <select value={riskRunId} onChange={(e) => action(async () => {
+                        const id = e.target.value;
+                        setRiskRunId(id);
+                        setRisk(id ? await api(`/projects/${project.id}/runs/${id}/risk`) : { candidates: [] });
+                      }, "高风险结果已更新")}>
+                        <option value="">请选择一次高风险核查</option>
+                        {runs.filter((run: Any) => run.modules?.includes("high_risk") && ["done", "partial"].includes(run.status)).map((run: Any) => (
+                          <option key={run.id} value={run.id}>{new Date(run.created_at * 1000).toLocaleString()} · {run.status}</option>
+                        ))}
+                      </select>
+                    </label>
+                  </div>
                   {risk.note && <Notice text={risk.note} />}
+                  {riskRunId && <div className="inline"><a className="button" href={`/api/projects/${project.id}/runs/${riskRunId}/risk/export`}>导出当前运行</a></div>}
+                  <section className="panel">
+                    <SectionTitle title="高风险核查汇总" subtitle={`按旧版 13 列格式关联报告三张表与指引：${risk.legacy_rows?.length || 0} 条。匹配结果需人工复核。`} />
+                    {risk.legacy_note && <Notice text={risk.legacy_note} />}
+                    <div className="key-scroll">
+                      <table className="risk-summary-grid">
+                        <thead><tr>{riskSummaryColumns.map((name) => <th key={name}>{name}</th>)}</tr></thead>
+                        <tbody>{(risk.legacy_rows || []).map((row: Any, index: number) => (
+                          <tr key={`${row.source_row_id}-${row.guide_key}-${index}`} title={`来源：${(row.source_locations || []).join('、')}；匹配度：${row.score || 0}%`}>
+                            {riskSummaryColumns.map((name) => <td key={name}>{row.values?.[name] ?? ""}</td>)}
+                          </tr>
+                        ))}</tbody>
+                      </table>
+                    </div>
+                    {!risk.legacy_rows?.length && <Empty text="未找到符合旧版 98% 要求项匹配条件的记录；请查看下方完整来源与候选。" />}
+                  </section>
+                  <section className="panel">
+                    <SectionTitle title="全部来源行" subtitle={`3/4/5 章来源 ${risk.source_rows?.length || 0} 行`} />
+                    {(risk.source_rows || []).map((row: Any) => <div className="list-row" key={row.row_id}><b>{row.source}</b><span>{row.description || "未解析描述"} · {row.review?.status || "待复核"}</span></div>)}
+                  </section>
+                  <section className="panel risk-raw-panel"><SectionTitle title="来源原始值" subtitle="按第3、4、5章定位来源行，核对提取值和复核状态。" />{(risk.source_rows || []).map((row: Any) => <details key={`raw-${row.row_id}`}><summary>{row.source} · {row.review?.status || "待复核"}</summary><pre>{JSON.stringify({ row_id: row.row_id, chapter: row.chapter, table_location: row.table_location, row_number: row.row_number, raw_values: row.raw_values || row.values || {} }, null, 2)}</pre></details>)}</section>
                   <div className="panel">
                     <SectionTitle
                       title="风险问题候选"
@@ -938,12 +793,18 @@ function App() {
                               <small>{m.source}</small>
                             </div>
                           ))}
+                          <details className="risk-evidence"><summary>查看候选原始值和依据</summary><pre>{JSON.stringify(item, null, 2)}</pre></details>
+                          <div className="review-actions"><button onClick={() => action(async () => { const updated = await api(`/projects/${project.id}/runs/${riskRunId}/risk/candidate:${item.row_id}`, "PATCH", { version: item.review?.version || 0, status: "confirmed", conclusion: "人工确认候选关联", reason: "" }); setRisk(await api(`/projects/${project.id}/runs/${riskRunId}/risk`)); }, "高风险关联已复核")}>确认关联</button><button onClick={() => action(async () => { await api(`/projects/${project.id}/runs/${riskRunId}/risk/candidate:${item.row_id}`, "PATCH", { version: item.review?.version || 0, status: "needs_evidence", conclusion: "", reason: "需要补充证据" }); setRisk(await api(`/projects/${project.id}/runs/${riskRunId}/risk`)); }, "已标记补证")}>需要补证</button></div>
                         </div>
                       </div>
                     ))}
                     {!risk.candidates?.length && (
                       <Empty text="完成高风险核查任务后显示候选" />
                     )}
+                  </div>
+                  <div className="grid2 mt">
+                    <section className="panel"><SectionTitle title="未匹配来源" subtitle={`需要人工补充：${risk.unmatched?.length || 0} 条`} />{risk.unmatched?.map((item: Any) => <div className="list-row" key={item.source_row_id}><b>{item.source || item.source_row_id}</b><span>{item.reason}</span></div>)}{!risk.unmatched?.length && <Empty text="暂无未匹配来源" />}</section>
+                    <section className="panel"><SectionTitle title="冲突与适用性" subtitle={`冲突：${risk.conflicts?.length || 0} 条`} />{risk.conflicts?.map((item: Any, index: number) => <div className="list-row" key={index}><b>{item.type || "冲突"}</b><span>{item.reason || JSON.stringify(item)}</span></div>)}{risk.applicability?.status === "unknown" && <Notice text="适用性尚未确认，不能自动下结论。" />}{!risk.conflicts?.length && risk.applicability?.status !== "unknown" && <Empty text="暂无冲突" />}</section>
                   </div>
                 </>
               )}
@@ -952,7 +813,7 @@ function App() {
                   <PageTitle
                     kicker="REVIEW TASKS"
                     title="启动审核任务"
-                    desc="勾选需要的模块。宽松与严格使用相同判定规则，只改变描述覆盖要求。"
+                    desc="勾选需要的模块。常规与严格使用相同判定规则，只改变描述覆盖要求。"
                   />
                   <div className="grid2">
                     <section className="panel">
@@ -994,7 +855,7 @@ function App() {
                           className={mode === "lenient" ? "on" : ""}
                           onClick={() => setMode("lenient")}
                         >
-                          宽松审核
+                          常规审核
                         </button>
                         <button
                           className={mode === "strict" ? "on" : ""}
@@ -1006,6 +867,17 @@ function App() {
                       <p className="muted">
                         两种模式均不允许遗漏关键条件，也都按同一判定规则复核原结论。
                       </p>
+                      {modules.includes("appendix_d") && (
+                        <label className="field-label mt">
+                          本次使用的个人模型档案
+                          <select value={selectedModelProfile} onChange={(e) => setSelectedModelProfile(e.target.value)}>
+                            <option value="">请选择</option>
+                            {modelProfiles.filter((p) => p.enabled).map((p) => (
+                              <option key={p.id} value={p.id}>{modelServices.find((s) => s.id === p.service_id)?.name || "服务"} · {p.model}</option>
+                            ))}
+                          </select>
+                        </label>
+                      )}
                       <div className="inline mt">
                         <button
                           onClick={() =>
@@ -1015,7 +887,7 @@ function App() {
                                   await api(
                                     `/projects/${project.id}/precheck`,
                                     "POST",
-                                    { modules },
+                                    { modules, model_profile_id: selectedModelProfile, preview_only: modules.includes("appendix_d") },
                                   ),
                                 ),
                               "预检查完成",
@@ -1032,20 +904,26 @@ function App() {
                               const result = await api(
                                 `/projects/${project.id}/precheck`,
                                 "POST",
-                                { modules },
+                                { modules, model_profile_id: selectedModelProfile, preview_only: modules.includes("appendix_d") },
                               );
                               setPrecheck(result);
                               if (result.blockers?.length)
                                 throw new Error(result.blockers.join("；"));
-                              await api(
+                              const run = await api(
                                 `/projects/${project.id}/runs`,
                                 "POST",
                                 {
                                   modules,
                                   mode,
+                                  model_profile_id: selectedModelProfile,
+                                  preview_only: modules.includes("appendix_d"),
                                   request_key: crypto.randomUUID(),
                                 },
                               );
+                              if (modules.includes("appendix_d")) {
+                                setRunDetail(await api(`/projects/${project.id}/runs/${run.id}`));
+                                setRedactionPreview(await api(`/projects/${project.id}/runs/${run.id}/redaction`));
+                              }
                               await load(project, "runs");
                             }, "审核任务已创建")
                           }
@@ -1102,12 +980,14 @@ function App() {
                               className="link"
                               onClick={() =>
                                 action(
-                                  async () =>
-                                    setRunDetail(
-                                      await api(
-                                        `/projects/${project.id}/runs/${r.id}`,
-                                      ),
-                                    ),
+                                  async () => {
+                                    setRunDetail(await api(`/projects/${project.id}/runs/${r.id}`));
+                                    if (r.modules?.includes("appendix_d") && ["awaiting_redaction", "queued", "running"].includes(r.status)) {
+                                      setRedactionPreview(await api(`/projects/${project.id}/runs/${r.id}/redaction`));
+                                    } else {
+                                      setRedactionPreview(null);
+                                    }
+                                  },
                                   "任务详情已展开",
                                 )
                               }
@@ -1180,6 +1060,40 @@ function App() {
                       </div>
                     </section>
                   )}
+                  {redactionPreview && (
+                    <section className="panel mt">
+                      <SectionTitle title="脱敏请求复核" subtitle={`请求 ${redactionPreview.counts?.requests || 0} 项 · 命中 ${redactionPreview.counts?.hits || 0} 处 · 待确认 ${redactionPreview.counts?.uncertain || 0} 项`} />
+                      <p className="muted">请逐条核对预览中的姓名、地址等敏感值。发现遗漏时补充词典并重新生成预览，再确认发送。</p>
+                      {redactionPreview.items?.map((item: Any) => (
+                        <details className="redaction-item" key={item.task_id}>
+                          <summary>{runDetail?.tasks?.find((task: Any) => task.id === item.task_id)?.label || item.task_id} · {item.hits.length} 处替换 · {item.uncertain.length ? "需处理" : "待人工核对"}</summary>
+                          {item.uncertain.length > 0 && <Notice text={`发现需人工确认的片段：${item.uncertain.join("、")}`} />}
+                          <pre>{JSON.stringify(item.payload, null, 2)}</pre>
+                          <label><input type="checkbox" checked={redactionReviewedHashes.includes(item.request_hash)} onChange={(e) => setRedactionReviewedHashes(e.target.checked ? [...redactionReviewedHashes, item.request_hash] : redactionReviewedHashes.filter((hash) => hash !== item.request_hash))} />已核对本条请求的脱敏结果</label>
+                        </details>
+                      ))}
+                      <div className="inline">
+                        <select aria-label="补充敏感词类型" value={redactionExtraKind} onChange={(e) => setRedactionExtraKind(e.target.value)}><option value="name">人名</option><option value="address">地址</option><option value="organization">单位</option><option value="identifier">编号</option></select>
+                        <textarea aria-label="补充敏感词" placeholder="补充遗漏的敏感原值，一行一个" value={redactionExtraTerms} onChange={(e) => setRedactionExtraTerms(e.target.value)} />
+                        <button disabled={busy || !redactionExtraTerms.trim()} onClick={() => action(async () => {
+                          const terms = { ...(project.config?.redaction_terms || {}) };
+                          terms[redactionExtraKind] = [...new Set([...(terms[redactionExtraKind] || []), ...redactionExtraTerms.split(/\r?\n/).map((value) => value.trim()).filter(Boolean)])];
+                          const updated = await api(`/projects/${project.id}`, "PATCH", { redaction_terms: terms });
+                          setProject(updated); setRedactionDraft(terms);
+                          await api(`/projects/${project.id}/runs/${redactionPreview.run_id}/redaction/refresh`, "POST", {});
+                          setRedactionPreview(await api(`/projects/${project.id}/runs/${redactionPreview.run_id}/redaction`));
+                          setRedactionReviewedHashes([]); setRedactionExtraTerms("");
+                        }, "词典已补充，预览已重新生成")}>补充词典并重新预览</button>
+                      </div>
+                      <button className="primary" disabled={busy || !redactionPreview.items?.length || redactionPreview.items.some((item: Any) => item.uncertain.length || !redactionReviewedHashes.includes(item.request_hash))} onClick={() => action(async () => {
+                        const hashes = Object.fromEntries(redactionPreview.items.map((item: Any) => [item.task_id, item.request_hash]));
+                        await api(`/projects/${project.id}/runs/${redactionPreview.run_id}/redaction/authorize`, "POST", { hashes, list_hash: redactionPreview.list_hash });
+                        setRedactionPreview(null);
+                        setRunDetail(await api(`/projects/${project.id}/runs/${redactionPreview.run_id}`));
+                        await load(project, "runs");
+                      }, "脱敏请求已授权，任务开始处理")}>确认脱敏结果并发送</button>
+                    </section>
+                  )}
                 </>
               )}
               {view === "issues" && (
@@ -1192,9 +1106,10 @@ function App() {
                     </div>
                     <div className="inline">
                       <button
+                        disabled={!issueRunId}
                         onClick={() =>
                           window.open(
-                            `/api/projects/${project.id}/export?format=xlsx`,
+                            `/api/projects/${project.id}/export?format=xlsx&run_id=${encodeURIComponent(issueRunId)}${issueModule ? `&module=${encodeURIComponent(issueModule)}` : ""}`,
                             "_blank",
                           )
                         }
@@ -1203,9 +1118,10 @@ function App() {
                       </button>
                       <button
                         className="primary"
+                        disabled={!issueRunId}
                         onClick={() =>
                           window.open(
-                            `/api/projects/${project.id}/export?format=docx`,
+                            `/api/projects/${project.id}/export?format=docx&run_id=${encodeURIComponent(issueRunId)}${issueModule ? `&module=${encodeURIComponent(issueModule)}` : ""}`,
                             "_blank",
                           )
                         }
@@ -1214,6 +1130,29 @@ function App() {
                       </button>
                     </div>
                   </div>
+                  <div className="issue-filters">
+                    <select aria-label="审核批次" value={issueRunId} onChange={(e) => { setIssueRunId(e.target.value); setSelectedIssueIds([]); setSelectedIssue(null); }}>
+                      <option value="">选择审核批次</option>
+                      {runs.map((run: Any) => <option key={run.id} value={run.id}>{new Date(run.created_at * 1000).toLocaleString()} · {stateNames[run.status] || run.status}</option>)}
+                    </select>
+                    <select aria-label="审核模块" value={issueModule} onChange={(e) => { setIssueModule(e.target.value); setSelectedIssueIds([]); }}>
+                      <option value="">全部模块</option>
+                      <option value="assets_full">三文档一致性</option>
+                      <option value="appendix_d">附录D审核</option>
+                      <option value="high_risk">高风险核查</option>
+                    </select>
+                    <select aria-label="问题类别" value={issueCategory} onChange={(e) => { setIssueCategory(e.target.value); setSelectedIssueIds([]); }}>
+                      <option value="">全部类别</option>
+                      {[...new Set(issues.map((x: Any) => x.category))].map((category) => <option key={category} value={category}>{categoryNames[category] || category}</option>)}
+                    </select>
+                    <select aria-label="问题状态" value={issueStatus} onChange={(e) => { setIssueStatus(e.target.value); setSelectedIssueIds([]); }}>
+                      <option value="ALL">全部状态</option>
+                      {(["pending", "confirmed", "rejected", "needs_evidence"] as const).map((status) => <option key={status} value={status}>{stateNames[status]}</option>)}
+                    </select>
+                    <input aria-label="搜索问题或对象" placeholder="搜索问题或对象" value={issueQuery} onChange={(e) => { setIssueQuery(e.target.value); setSelectedIssueIds([]); }} />
+                    <span>{visibleIssues.length} 项匹配</span>
+                  </div>
+                  <div className="issue-workbench">
                   <div className="chapter-tabs">
                     {CODES.map(([code, title]) => (
                       <button
@@ -1221,44 +1160,31 @@ function App() {
                         className={chapter === code ? "active" : ""}
                         onClick={() => {
                           setChapter(code);
+                          setChapterContent(null);
                           setSelectedIssue(null);
+                          setSelectedIssueIds([]);
                         }}
                       >
                         {title}
-                        {code === chapter && <b>{issues.length}</b>}
+                        <b>{filterIssues(issues, code, "ALL", "").length}</b>
                       </button>
                     ))}
                   </div>
-                  <div className="issue-filters">
-                    <select
-                      aria-label="问题状态"
-                      value={issueStatus}
-                      onChange={(e) => setIssueStatus(e.target.value)}
-                    >
-                      <option value="ALL">全部状态</option>
-                      {[
-                        "pending",
-                        "confirmed",
-                        "rejected",
-                        "needs_evidence",
-                        "resolved",
-                      ].map((status) => (
-                        <option key={status} value={status}>
-                          {stateNames[status]}
-                        </option>
-                      ))}
-                    </select>
-                    <input
-                      aria-label="搜索问题或对象"
-                      placeholder="搜索问题或对象"
-                      value={issueQuery}
-                      onChange={(e) => setIssueQuery(e.target.value)}
-                    />
-                    <span>{visibleIssues.length} 项匹配</span>
-                  </div>
-                  {!configured.has(chapter) && (
-                    <Notice text="本章节界面已保留，审核规则尚未配置。后续可接入规则版本和检查结果。" />
+                  {(!configured.has(chapter) || issueCoverage.find((item: Any) => item.code === chapter)?.review_status === "规则待配置") && (
+                    <Notice text="本章节已保留内容入口，审核规则待配置；此处无问题不代表审核通过。" />
                   )}
+                  <div className="issue-main">
+                  {issueCoverage.length > 0 && <div className="coverage-strip">{issueCoverage.filter((item: Any) => chapter === "ALL" || item.code === chapter).map((item: Any) => <span key={item.code}>{item.title || item.code}：{item.content_status} / {item.review_status}</span>)}</div>}
+                  <ChapterContent data={chapterContent} />
+                  <div className="batch-toolbar">
+                    <label><input type="checkbox" checked={visibleIssues.length > 0 && visibleSelectedIssueIds.length === visibleIssues.length} onChange={(e) => setSelectedIssueIds(e.target.checked ? visibleIssues.map((item) => item.id) : [])} />选择当前可见 {visibleIssues.length} 项</label>
+                    <span>已选 {visibleSelectedIssueIds.length} 项</span>
+                    <input aria-label="批量复核意见" placeholder="批量复核意见" value={batchNote} onChange={(e) => setBatchNote(e.target.value)} />
+                    <button className="primary" disabled={busy || !issueRunId || !visibleSelectedIssueIds.length} onClick={() => action(async () => {
+                      await api(`/projects/${project.id}/issues/batch`, "POST", { run_id: issueRunId, items: visibleIssues.filter((item) => visibleSelectedIssueIds.includes(item.id)).map((item) => ({ id: item.id, version: item.version })), status: "confirmed", note: batchNote });
+                      setSelectedIssueIds([]); setSelectedIssue(null); await load(project, "issues", chapter);
+                    }, "所选问题已确认")}>批量确认问题</button>
+                  </div>
                   <div className="issue-layout">
                     <section className="panel issue-list">
                       <div className="list-head">
@@ -1274,12 +1200,13 @@ function App() {
                         </span>
                       </div>
                       {visibleIssues.map((x) => (
+                        <div className="issue-select-row" key={x.id}>
+                        <input type="checkbox" aria-label={`选择问题 ${x.title}`} checked={visibleSelectedIssueIds.includes(x.id)} onChange={(e) => setSelectedIssueIds(e.target.checked ? [...visibleSelectedIssueIds, x.id] : visibleSelectedIssueIds.filter((id) => id !== x.id))} />
                         <button
                           className={
                             "issue-card " +
                             (selectedIssue?.id === x.id ? "selected" : "")
                           }
-                          key={x.id}
                           onClick={() => {
                             setSelectedIssue(x);
                             setNote(x.note || "");
@@ -1307,6 +1234,7 @@ function App() {
                             {x.evidence?.[0]?.source || "来源待核实"}
                           </small>
                         </button>
+                        </div>
                       ))}
                       {!visibleIssues.length && (
                         <Empty text="当前章节暂无问题。运行审核后会显示候选；未配置章节不会显示虚构结果。" />
@@ -1365,9 +1293,9 @@ function App() {
                           <div className="review-actions">
                             {[
                               ["confirmed", "确认问题"],
-                              ["rejected", "排除"],
-                              ["needs_evidence", "待补证"],
-                              ["resolved", "已解决"],
+                              ["rejected", "标记误报"],
+                              ["needs_evidence", "待核实"],
+                              ["pending", "待确认"],
                             ].map(([s, title]) => (
                               <button
                                 key={s}
@@ -1387,7 +1315,6 @@ function App() {
                                     await load(
                                       project,
                                       "issues",
-                                      assetScope,
                                       chapter,
                                     );
                                   }, "复核状态已保存")
@@ -1406,6 +1333,8 @@ function App() {
                         </div>
                       )}
                     </section>
+                  </div>
+                  </div>
                   </div>
                 </>
               )}
@@ -1576,6 +1505,22 @@ function App() {
                           </label>
                         ))}
                       </div>
+                      <label className="field-label mt">
+                        电力行业类别（二选一）
+                        <select
+                          value={settings.power_category || ""}
+                          onChange={(e) =>
+                            setSettings({
+                              ...settings,
+                              power_category: e.target.value || null,
+                            })
+                          }
+                        >
+                          <option value="">不使用电力扩展</option>
+                          <option value="power_monitoring">电力监控系统安全要求</option>
+                          <option value="power_management">电力管理信息系统安全要求</option>
+                        </select>
+                      </label>
                       <button
                         className="primary mt"
                         onClick={() =>
@@ -1589,6 +1534,8 @@ function App() {
                                 a: settings.a,
                                 g: settings.g,
                                 extensions: settings.extensions || [],
+                                power_category: settings.power_category || null,
+                                redaction_terms: redactionDraft,
                               },
                             );
                             setProject(p);
@@ -1626,6 +1573,22 @@ function App() {
                         </button>
                       </div>
                       <div className="divider" />
+                      <h4>项目脱敏词典</h4>
+                      <input type="file" accept=".xlsx" onChange={(e) => {
+                        const file = e.target.files?.[0];
+                        if (!file) return;
+                        action(async () => {
+                          const form = new FormData(); form.append('file', file);
+                          const updated = await api(`/projects/${project.id}/redaction-terms`, 'POST', form, true);
+                          setProject(updated); setSettings(updated.config || {}); setRedactionDraft(updated.config?.redaction_terms || {});
+                        }, '脱敏词典已导入');
+                      }} />
+                      {['name', 'organization', 'address', 'phone', 'ip', 'domain', 'url', 'identifier'].map((kind) => (
+                        <label key={kind} className="field-label">
+                          {kind}
+                          <textarea rows={2} value={(redactionDraft[kind] || []).join("\n")} onChange={(e) => setRedactionDraft({ ...redactionDraft, [kind]: e.target.value.split(/\r?\n/).map((x: string) => x.trim()).filter(Boolean) })} />
+                        </label>
+                      ))}
                       <h4>对象别名与测评项匹配</h4>
                       <p className="muted">
                         资产同名或名称变化时，在一致性页面查阅来源；附录D待匹配记录可在“附录D审核”页面逐条确认测评项。
@@ -1634,7 +1597,43 @@ function App() {
                   </div>
                 </>
               )}
+              {view === "model" && (
+                <section className="panel form-panel">
+                  <PageTitle kicker="MODEL PROFILES" title="个人模型配置" desc="管理员批准服务地址后，审核员只管理自己的密钥；密钥不会回显。" />
+                  <label>服务<select value={modelProfileDraft.service_id} onChange={(e) => setModelProfileDraft({ ...modelProfileDraft, service_id: e.target.value, model: "" })}><option value="">请选择服务</option>{modelServices.filter((s) => s.enabled).map((s) => <option key={s.id} value={s.id}>{s.name}</option>)}</select></label>
+                  <label>模型<select value={modelProfileDraft.model} onChange={(e) => setModelProfileDraft({ ...modelProfileDraft, model: e.target.value })}><option value="">请选择模型</option>{(modelServices.find((s) => s.id === modelProfileDraft.service_id)?.models || []).map((name: string) => <option key={name} value={name}>{name}</option>)}</select></label>
+                  <label>API Key<input type="password" value={modelProfileDraft.api_key} onChange={(e) => setModelProfileDraft({ ...modelProfileDraft, api_key: e.target.value })} /></label>
+                  <button className="primary" onClick={() => action(async () => { await api("/me/model-profiles", "POST", modelProfileDraft); const profiles = await api("/me/model-profiles"); setModelProfiles(profiles); setSelectedModelProfile(profiles.at(-1)?.id || ""); setModelProfileDraft({ service_id: "", model: "", api_key: "" }); }, "个人模型档案已保存")}>保存个人档案</button>
+                  {modelProfiles.map((profile) => <div className="list-row" key={profile.id}><b>{profile.model}</b><span>{modelServices.find((s) => s.id === profile.service_id)?.name || "服务已删除"} · {profile.has_key ? "Key 已加密" : "未配置 Key"} · v{profile.version}</span></div>)}
+                </section>
+              )}
+              {view === "model" && modelProfiles.length > 0 && (
+                <section className="panel form-panel mt">
+                  <SectionTitle title="管理个人模型档案" subtitle="更新已选档案的服务、模型或 API Key；密钥不回显。" />
+                  <label>选择档案<select value={modelProfileEditId} onChange={(e) => { const selected = modelProfiles.find((profile: Any) => profile.id === e.target.value); setModelProfileEditId(e.target.value); if (selected) setModelProfileDraft({ service_id: selected.service_id, model: selected.model, api_key: "" }); }}><option value="">请选择档案</option>{modelProfiles.map((profile: Any) => <option key={profile.id} value={profile.id}>{profile.model} · v{profile.version}</option>)}</select></label>
+                  {modelProfileEditId && <>
+                    <label>服务<select value={modelProfileDraft.service_id} onChange={(e) => setModelProfileDraft({ ...modelProfileDraft, service_id: e.target.value, model: "" })}>{modelServices.filter((service: Any) => service.enabled).map((service: Any) => <option key={service.id} value={service.id}>{service.name}</option>)}</select></label>
+                    <label>模型<select value={modelProfileDraft.model} onChange={(e) => setModelProfileDraft({ ...modelProfileDraft, model: e.target.value })}>{(modelServices.find((service: Any) => service.id === modelProfileDraft.service_id)?.models || []).map((name: string) => <option key={name} value={name}>{name}</option>)}</select></label>
+                    <label>替换 API Key<input type="password" value={modelProfileDraft.api_key} onChange={(e) => setModelProfileDraft({ ...modelProfileDraft, api_key: e.target.value })} placeholder="仅需替换时填写" /></label>
+                    <div className="inline"><button className="primary" onClick={() => action(async () => { const body: Any = { service_id: modelProfileDraft.service_id, model: modelProfileDraft.model }; if (modelProfileDraft.api_key) body.api_key = modelProfileDraft.api_key; await api(`/me/model-profiles/${modelProfileEditId}`, "PATCH", body); setModelProfiles(await api("/me/model-profiles")); setModelProfileDraft({ service_id: "", model: "", api_key: "" }); setModelProfileEditId(""); }, "模型档案已更新")}>保存修改</button><button onClick={() => action(async () => { const current = modelProfiles.find((profile: Any) => profile.id === modelProfileEditId); await api(`/me/model-profiles/${modelProfileEditId}`, "PATCH", { enabled: !current?.enabled }); setModelProfiles(await api("/me/model-profiles")); }, "模型档案状态已更新")}>{modelProfiles.find((profile: Any) => profile.id === modelProfileEditId)?.enabled ? "停用" : "启用"}</button></div>
+                  </>}
+                </section>
+              )}
               {view === "model" && user.admin && (
+                <section className="panel form-panel mt">
+                  <SectionTitle title="审核模型服务" subtitle="管理员维护允许使用的模型服务和模型名称，不保存审核人员的 API Key。" />
+                  <label>服务名称<input value={modelServiceDraft.name} onChange={(e) => setModelServiceDraft({ ...modelServiceDraft, name: e.target.value })} /></label>
+                  <label>OpenAI 兼容接口地址<input value={modelServiceDraft.base_url} onChange={(e) => setModelServiceDraft({ ...modelServiceDraft, base_url: e.target.value })} /></label>
+                  <label>允许模型，每行一个<textarea value={modelServiceDraft.models} onChange={(e) => setModelServiceDraft({ ...modelServiceDraft, models: e.target.value })} /></label>
+                  <button className="primary" onClick={() => action(async () => {
+                    await api("/model-services", "POST", { ...modelServiceDraft, models: modelServiceDraft.models.split(/\r?\n/).map((name: string) => name.trim()).filter(Boolean) });
+                    setModelServices(await api("/model-services"));
+                    setModelServiceDraft({ name: "", base_url: "", models: "", enabled: true });
+                  }, "模型服务已加入白名单")}>添加服务</button>
+                  {modelServices.map((service) => <div className="list-row" key={service.id}><b>{service.name}</b><span>{service.base_url} · {service.models.join(", ")}</span></div>)}
+                </section>
+              )}
+              {view === "model" && user.admin && false && (
                 <>
                   <PageTitle
                     kicker="AI CONFIGURATION"
@@ -1959,35 +1958,6 @@ function Notice({ text }: { text: string }) {
     </div>
   );
 }
-function AliasEditor({
-  role,
-  asset,
-  current,
-  onSave,
-}: {
-  role: string;
-  asset: Any;
-  current: string;
-  onSave: (value: string) => void;
-}) {
-  const [value, setValue] = useState(current);
-  return (
-    <div className="alias-editor">
-      <small>
-        {role} · {asset.source}
-      </small>
-      <div className="inline">
-        <input
-          aria-label={`${role} ${asset.name} 对象别名`}
-          value={value}
-          onChange={(e) => setValue(e.target.value)}
-        />
-        <button onClick={() => onSave(value.trim())}>保存别名</button>
-      </div>
-    </div>
-  );
-}
-
 function RequirementPicker({
   record,
   current,
